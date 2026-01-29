@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('contestants', function (Blueprint $table) {
             $table->integer('age')->nullable()->after('region_id');
+            
             $table->text('bio')->nullable()->after('age');
         });
     }
