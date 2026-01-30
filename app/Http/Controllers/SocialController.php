@@ -128,10 +128,13 @@ class SocialController extends Controller
                 ]);
             }
 
-            // Logic according to Sir's requirements:
-            // 1. If not paid -> go to payment
+            // Redirection logic: 
+            // 1. If not paid -> go to payment page
+
             if ($contestant->payment_status == 0) {
-                return redirect()->route('contestant.payment.notice');
+
+                return redirect()->route('contestant.onboarding.index');
+
             }
 
             // 2. If paid but profile incomplete -> go to profile setup
@@ -139,6 +142,7 @@ class SocialController extends Controller
                 return redirect()->route('contestant.profile.setup');
             }
 
+            // 3. Fully registered -> go to dashboard
             return redirect()->route('contestant.dashboard');
         }
 

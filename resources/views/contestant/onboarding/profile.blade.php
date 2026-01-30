@@ -93,7 +93,7 @@
                         <!-- Age -->
                         <div>
                             <label class="block text-sm font-bold text-slate-700 mb-2">Your Age</label>
-                            <input type="number" name="age" value="{{ old('age') }}" min="18" max="100"
+                            <input type="number" name="age" value="{{ old('age', $contestant?->age) }}" min="18" max="100"
                                 class="w-full px-5 py-4 rounded-xl border-2 @error('age') border-red-300 @else border-slate-100 @enderror bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all text-slate-800 font-medium"
                                 placeholder="Minimum age is 18" required>
                             @error('age')
@@ -103,7 +103,7 @@
                         {{-- Contact --}}
                         <div>
                             <label class="block text-sm font-bold text-slate-700 mb-2">Your Contact</label>
-                            <input type="text" name="contact" value="{{ old('contact') }}"
+                            <input type="text" name="contact" value="{{ old('contact', $contestant?->contact) }}"
                                 class="w-full px-5 py-4 rounded-xl border-2 @error('contact') border-red-300 @else border-slate-100 @enderror bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all text-slate-800 font-medium"
                                 placeholder="Phone number or WhatsApp" required>
                             <p class="mt-2 text-xs text-slate-400">Example: +1 234 567 8900</p>
@@ -124,7 +124,7 @@
 
                                     @foreach ($regions as $region)
                                         <option value="{{ $region->id }}"
-                                            {{ old('region') == $region->id ? 'selected' : '' }}
+                                            {{ old('region', $contestant?->region_id) == $region->id ? 'selected' : '' }}
                                             class="text-slate-900 bg-white py-2">
                                             {{ $region->name }}
                                         </option>
@@ -149,7 +149,7 @@
                             <label class="block text-sm font-bold text-slate-700 mb-2">Your Story (Bio)</label>
                             <textarea name="bio" rows="4"
                                 class="w-full px-5 py-4 rounded-xl border-2 @error('bio') border-red-300 @else border-slate-100 @enderror bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all text-slate-800 font-medium"
-                                placeholder="Tell the world why you should be the foxiest woman on earth..." required>{{ old('bio') }}</textarea>
+                                placeholder="Tell the world why you should be the foxiest woman on earth..." required>{{ old('bio', $contestant?->bio) }}</textarea>
                             <p class="mt-2 text-xs text-slate-400">Minimum 20 characters</p>
                             @error('bio')
                                 <p class="mt-1 text-xs text-red-500">{{ $message }}</p>

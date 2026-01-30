@@ -26,9 +26,14 @@ class ContestantOnboardingController extends Controller
         $user = Auth::user();
         $contestant = Contestant::where('user_id', $user->id)->first();
 
-        // If already paid, redirect to profile form
+        // 1. If profile already complete, go to dashboard
+        if ($contestant && $contestant->profile_status == 1) {
+            return redirect()->route('contestant.dashboard');
+        }
+
+        // 2. If already paid but profile incomplete, redirect to profile setup
         if ($contestant && $contestant->payment_status == 1) {
-            return redirect()->route('contestant.profile.create');
+            return redirect()->route('contestant.profile.setup');
         }
 
         return view('contestant.onboarding.index');
@@ -85,11 +90,14 @@ class ContestantOnboardingController extends Controller
 
         $contestant = Contestant::where('user_id', $user->id)->first();
 
-        // Security check: if not paid, redirect to payment
-
+        // 1. If not paid, redirect to payment
         if (!$contestant || $contestant->payment_status == 0) {
-
             return redirect()->route('contestant.onboarding.index');
+        }
+
+        // 2. If profile already complete, go to dashboard
+        if ($contestant->profile_status == 1) {
+            return redirect()->route('contestant.dashboard');
         }
 
         // Load regions for dropdown
