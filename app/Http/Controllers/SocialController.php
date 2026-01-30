@@ -27,10 +27,9 @@ class SocialController extends Controller
         $role = session('intended_role', 'member'); // Default to member if not set
         $user = $this->findOrCreateUser($socialUser, 'google', $role);
         Auth::login($user);
-        
+
         session()->forget('intended_role');
         return $this->redirectToDashboard($user);
-        
     }
 
     // -------------------
@@ -50,7 +49,7 @@ class SocialController extends Controller
         $role = session('intended_role', 'member');
         $user = $this->findOrCreateUser($socialUser, 'twitter', $role);
         Auth::login($user);
-        
+
         session()->forget('intended_role');
         return $this->redirectToDashboard($user);
     }
@@ -77,7 +76,6 @@ class SocialController extends Controller
 
         Auth::login($user);
         return $this->redirectToDashboard($user);
-
     }
 
     // -------------------
@@ -86,13 +84,13 @@ class SocialController extends Controller
     private function findOrCreateUser($socialUser, $provider, $role)
     {
         $user = User::where('provider_id', $socialUser->id)
-                    ->where('provider', $provider)
-                    ->first();
+            ->where('provider', $provider)
+            ->first();
 
         if (!$user) {
             $user = User::create([
                 'name' => $socialUser->name,
-                'email' => $socialUser->email ?? $socialUser->id.'@'.$provider.'.com',
+                'email' => $socialUser->email ?? $socialUser->id . '@' . $provider . '.com',
                 'provider' => $provider,
                 'provider_id' => $socialUser->id,
                 'role' => $role,
@@ -106,7 +104,6 @@ class SocialController extends Controller
                 $user->role = $role;
                 $user->save();
             }
-
         }
 
         return $user;
@@ -119,13 +116,13 @@ class SocialController extends Controller
     {
         if ($user->role == 'contestant') {
             $contestant = \App\Models\Contestant::where('user_id', $user->id)->first();
-            
+
             if (!$contestant) {
                 $contestant = \App\Models\Contestant::create([
                     'user_id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
-                    'payment_status' => 0, 
+                    'payment_status' => 0,
                     'profile_status' => 0,
                     'status' => 1
                 ]);
@@ -144,7 +141,7 @@ class SocialController extends Controller
 
             return redirect()->route('contestant.dashboard');
         }
-        
+
         if ($user->role == 'member') {
             // ... (keep existing member logic)
             $member = \App\Models\Member::where('user_id', $user->id)->first();
@@ -153,7 +150,7 @@ class SocialController extends Controller
                     ['user_id' => $user->id],
                     [
                         'name' => $user->name,
-                        'email' => $user->email, 
+                        'email' => $user->email,
                         'payment_status' => 1,
                         'subscription_ends_at' => now()->addMonth(),
                         'status' => 1,
@@ -165,5 +162,4 @@ class SocialController extends Controller
 
         return redirect()->route('admin.dashboard');
     }
-
 }

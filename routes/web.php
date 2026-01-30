@@ -69,13 +69,13 @@ Route::middleware(['auth', 'unpaid_member'])->group(function () {
 // Contestant Onboarding Routes
 Route::middleware('auth')->prefix('onboarding')->group(function () {
 
-    Route::get('/', [App\Http\Controllers\Contestant\ContestantOnboardingController::class, 'index'])->name('contestant.payment.notice');
+    Route::get('/', [App\Http\Controllers\Contestant\ContestantOnboardingController::class, 'index'])->name('contestant.onboarding.index');
     Route::post('/pay', [App\Http\Controllers\Contestant\ContestantOnboardingController::class, 'processPayment'])->name('contestant.onboarding.pay');
     Route::get('/success', [App\Http\Controllers\Contestant\ContestantOnboardingController::class, 'paymentSuccess'])->name('contestant.onboarding.success');
     Route::get('/profile-setup', [App\Http\Controllers\Contestant\ContestantOnboardingController::class, 'showProfileForm'])->name('contestant.profile.setup');
     Route::post('/profile-setup', [App\Http\Controllers\Contestant\ContestantOnboardingController::class, 'storeProfile'])->name('contestant.profile.store');
 
-});
+}); 
 
 // Member Onboarding Routes
 Route::middleware('auth')->prefix('member/onboarding')->group(function () {

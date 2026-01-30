@@ -12,18 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('contestants', function (Blueprint $table) {
-            $table->id(); 
+
+            $table->id();
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('phone')->nullable(); // Contact number
+            $table->string('contact')->nullable(); // Contact number
             $table->foreignId('region_id')->nullable()->constrained('regions')->onDelete('set null');
             $table->string('image')->nullable();
             $table->tinyInteger('payment_status')->default(0); // 0=not paid, 1=paid
             $table->tinyInteger('profile_status')->default(0); // 0=incomplete, 1=complete
             $table->tinyInteger('status')->default(1); // 0=inactive/blocked, 1=active
             $table->timestamps();
+
         });
+
     }
 
     /**
