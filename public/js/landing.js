@@ -217,16 +217,41 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
+// Role selection for social login
+function updateLoginRole(role) {
+    const contestantBtn = document.getElementById('btn-contestant');
+    const memberBtn = document.getElementById('btn-member');
+    const roleInputs = document.querySelectorAll('.role-input');
+    const ctaTitle = document.querySelector('.cta-title');
+
+    if (role === 'contestant') {
+        contestantBtn.classList.add('active');
+        memberBtn.classList.remove('active');
+        if (ctaTitle) ctaTitle.textContent = 'Join as Contestant';
+    } else {
+        memberBtn.classList.add('active');
+        contestantBtn.classList.remove('active');
+        if (ctaTitle) ctaTitle.textContent = 'Join as Member';
+    }
+
+    roleInputs.forEach(input => {
+        input.value = role;
+    });
+}
+
+// Export to window
+window.updateLoginRole = updateLoginRole;
+
 // Initialize everything on page load
 document.addEventListener('DOMContentLoaded', () => {
     initAOS();
 
-    // Add loading animation
-    document.body.style.opacity = '0';
-    setTimeout(() => {
-        document.body.style.transition = 'opacity 0.5s ease-in';
-        document.body.style.opacity = '1';
-    }, 100);
+    // Check if role is in URL (e.g. #login?role=member)
+    const urlParams = new URLSearchParams(window.location.search);
+    const roleParam = urlParams.get('role');
+    if (roleParam) {
+        updateLoginRole(roleParam);
+    }
 });
 
 // Prevent body scroll when menu is open

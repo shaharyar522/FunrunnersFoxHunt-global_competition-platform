@@ -92,12 +92,16 @@ class ContestantOnboardingController extends Controller
 
         // 1. If not paid, redirect to payment
         if (!$contestant || $contestant->payment_status == 0) {
+
             return redirect()->route('contestant.onboarding.index');
+
         }
 
         // 2. If profile already complete, go to dashboard
         if ($contestant->profile_status == 1) {
+
             return redirect()->route('contestant.dashboard');
+
         }
 
         // Load regions for dropdown
@@ -117,7 +121,7 @@ class ContestantOnboardingController extends Controller
             'age' => 'required|integer|min:18',
             'contact' => 'required|string|max:255',
             'region' => 'required|exists:regions,id',
-            'bio' => 'required|string|min:20',
+            'bio' => 'required|string',
         ]);
 
 

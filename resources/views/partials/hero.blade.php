@@ -34,16 +34,21 @@
 
          <div class="hero-buttons" data-aos="fade-up" data-aos-delay="400">   
 
-             <a href="{{ route('google-login', ['role' => 'contestant']) }}" style="text-decoration: none;">
-                 <button class="btn btn-primary">Join as Contestant</button>
+             <a href="{{ route('google-login', ['role' => 'contestant']) }}" class="btn btn-primary flex items-center gap-2">
+                 <span class="bg-white text-dark rounded-full w-6 h-6 flex items-center justify-center font-bold text-xs">G</span>
+                 Join as Contestant
              </a>
 
-             <a href="{{ route('google-login', ['role' => 'member']) }}" style="text-decoration: none;">
-
-                 <button class="btn btn-secondary">Join as Member</button>
-                 
+             <a href="{{ route('google-login', ['role' => 'member']) }}" class="btn btn-secondary flex items-center gap-2">
+                 <span class="bg-white text-indigo-600 rounded-full w-6 h-6 flex items-center justify-center font-bold text-xs">G</span>
+                 Join as Member
              </a>
              
+         </div>
+
+         <div class="mt-4" data-aos="fade-up" data-aos-delay="500">
+            <p class="text-sm text-gray-300">Or join using other social platforms below</p>
+            <a href="#login" class="text-primary-gold hover:underline scroll-link">More Social Options ↓</a>
          </div>
 
      </div>

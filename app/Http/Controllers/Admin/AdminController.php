@@ -97,7 +97,7 @@ class AdminController extends Controller
         
         $request->validate([
             'name' => 'required|string|max:255',
-            'phone' => 'nullable|string|max:20',
+            'contact' => 'nullable|string|max:20',
             'region_id' => 'required|exists:regions,id',
             'profile_status' => 'required|in:0,1',
         ]);

@@ -24,7 +24,7 @@
                 @foreach($contestants as $contestant)
                 <tr class="hover:bg-gray-50 transition-all">
                     <td class="px-8 py-5 text-sm font-medium text-gray-900">{{ $contestant->name }}</td>
-                    <td class="px-8 py-5 text-sm text-gray-600">{{ $contestant->phone ?? 'N/A' }}</td>
+                    <td class="px-8 py-5 text-sm text-gray-600">{{ $contestant->contact ?? 'N/A' }}</td>
                     <td class="px-8 py-5 text-sm text-gray-600">{{ $contestant->region->name ?? 'N/A' }}</td>
                     <td class="px-8 py-5">
                         @if($contestant->profile_status == 1)
@@ -74,7 +74,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Phone / Contact</label>
-                        <input type="text" id="edit_phone" name="phone" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                        <input type="text" id="edit_contact" name="contact" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Region</label>
@@ -151,7 +151,7 @@ function editContestant(id) {
 
     $.get(url, function(data) {
         $('#edit_name').val(data.name);
-        $('#edit_phone').val(data.phone || '');
+        $('#edit_contact').val(data.contact || '');
         $('#edit_region').val(data.region_id);
         $('#edit_profile_status').val(data.profile_status);
     });
@@ -170,7 +170,7 @@ function saveContestant() {
 
     const formData = {
         name: $('#edit_name').val(),
-        phone: $('#edit_phone').val(),
+        contact: $('#edit_contact').val(),
         region_id: $('#edit_region').val(),
         profile_status: $('#edit_profile_status').val(),
     };
