@@ -15,27 +15,23 @@ class RedirectIfUnpaidContestant
      */
     public function handle(Request $request, Closure $next): Response
     {
+
         $user = Auth::user();
 
         if ($user && $user->role === 'contestant') {
             $contestant = Contestant::where('user_id', $user->id)->first();
 
-            // 1. If no contestant record exists or they haven't paid, send them to payment
-            if (!$contestant || $contestant->payment_status == 0) {
-                // Allow access to the onboarding/payment routes to avoid infinite loop
-                if (!$request->is('onboarding') && !$request->is('onboarding/pay') && !$request->is('onboarding/success')) {
-                    return redirect()->route('contestant.onboarding.index');
-                }
-            } 
-            // 2. If paid but profile incomplete, send them to profile setup
-            elseif ($contestant->profile_status == 0) {
-                // Allow access to profile setup routes to avoid infinite loop
-                if (!$request->is('onboarding/profile-setup')) {
-                    return redirect()->route('contestant.profile.setup');
+            // If no record, unpaid, or incomplete profile -> push them to dashboard
+            if (!$contestant || $contestant->payment_status == 0 || $contestant->profile_status == 0) {
+                // Allow access to the dashboard itself and the processing routes
+                if (!$request->routeIs('contestant.dashboard') && 
+                    !$request->is('onboarding/*')) {
+                    return redirect()->route('contestant.dashboard');
                 }
             }
         }
 
         return $next($request);
+
     }
 }

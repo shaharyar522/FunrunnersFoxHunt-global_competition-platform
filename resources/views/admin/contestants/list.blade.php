@@ -11,6 +11,7 @@
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
+
                 <tr>
                     <th class="px-8 py-4 font-medium">Name</th>
                     <th class="px-8 py-4 font-medium">Contact</th>
@@ -19,6 +20,7 @@
                     <th class="px-8 py-4 font-medium">Status</th>
                     <th class="px-8 py-4 font-medium">Action</th>
                 </tr>
+                
             </thead>
             <tbody class="divide-y divide-gray-100">
                 @foreach($contestants as $contestant)

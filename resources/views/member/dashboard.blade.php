@@ -4,31 +4,24 @@
 
 @section('content')
 <div class="min-h-screen bg-slate-50">
-    <!-- Main Navbar/Header -->
-    <header class="bg-white border-b border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-900">Member Dashboard</h1>
-                <!-- <p class="text-slate-500 text-sm">Manage your votes and view live competition results.</p> -->
-            </div>
-            <div class="mt-4 md:mt-0 flex items-center space-x-4">
-                <div class="text-right">
-                    <p class="text-sm font-semibold text-slate-900">{{ Auth::user()->name }}</p>
-                    <p class="text-xs text-slate-500">Premium Member</p>
-                </div>
-                <div class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold">
-                    {{ substr(Auth::user()->name, 0, 1) }}
-                </div>
-            </div>
-        </div>
-    </header>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Page Title -->
+
+        <div class="mb-8">
+
+            <h1 class="text-3xl font-bold text-slate-900">Member Dashboard</h1>
             
+            <p class="text-slate-500 mt-1">Welcome back, {{ Auth::user()->name }}! Manage your votes and view results.</p>
+            <p>wellcome {{ Auth::user()->name }}</p>
+
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
             <!-- Left Column: Main Content -->
             <div class="lg:col-span-2 space-y-8">
-                
+
                 <!-- Active Voting Rounds -->
                 <section>
                     <div class="flex items-center justify-between mb-4">
@@ -40,6 +33,7 @@
                     </div>
 
                     @if(isset($activeRounds) && $activeRounds->count() > 0)
+
                         <div class="grid grid-cols-1 gap-4">
                             @foreach($activeRounds as $round)
                                 <div class="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-sm transition-shadow">
@@ -70,6 +64,7 @@
                                 </div>
                             @endforeach
                         </div>
+
                     @else
                         <div class="bg-white border-2 border-dashed border-slate-200 rounded-xl p-12 text-center">
                             <p class="text-slate-400 font-medium">No competition rounds are currently active.</p>
@@ -106,7 +101,7 @@
 
             <!-- Right Column: Stats & Meta -->
             <div class="space-y-6">
-                
+
                 <!-- Membership Status Card -->
 
                 <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
@@ -124,20 +119,22 @@
                 </div>
 
                 <!-- Competition Rules -->
-                <div class="bg-slate-900 rounded-2xl p-6 text-white overflow-hidden relative">
+                {{-- <div class="bg-slate-900 rounded-2xl p-6 text-white overflow-hidden relative">
                     <div class="absolute -right-8 -bottom-8 opacity-10">
                         <svg class="w-32 h-32" fill="white" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
-                    </div>
+                    </div> --}}
                 </div>
 
                 <!-- Support/Notice -->
-                <div class="text-center p-4">
+                {{-- <div class="text-center p-4">
                     <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Project Fox Hunt</p>
                     <p class="text-xs text-slate-500 mt-1">Need help? <a href="#" class="text-indigo-600 font-bold underline">Contact Admin</a></p>
-                </div>
+                </div> --}}
 
             </div>
         </div>
+
+
     </main>
 </div>
 

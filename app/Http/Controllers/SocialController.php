@@ -115,34 +115,25 @@ class SocialController extends Controller
     private function redirectToDashboard($user)
     {
         if ($user->role == 'contestant') {
+
             $contestant = \App\Models\Contestant::where('user_id', $user->id)->first();
 
             if (!$contestant) {
+
                 $contestant = \App\Models\Contestant::create([
+
                     'user_id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
                     'payment_status' => 0,
                     'profile_status' => 0,
                     'status' => 1
+
                 ]);
-            }
-
-            // Redirection logic: 
-            // 1. If not paid -> go to payment page
-
-            if ($contestant->payment_status == 0) {
-
-                return redirect()->route('contestant.onboarding.index');
 
             }
 
-            // 2. If paid but profile incomplete -> go to profile setup
-            if ($contestant->profile_status == 0) {
-                return redirect()->route('contestant.profile.setup');
-            }
-
-            // 3. Fully registered -> go to dashboard
+            // Redirection logic: All flows now start at the unified dashboard
             return redirect()->route('contestant.dashboard');
         }
 

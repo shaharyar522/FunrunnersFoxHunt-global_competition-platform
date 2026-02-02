@@ -17,7 +17,7 @@
          <div class="particle" style="--i:2"></div>
          <div class="particle" style="--i:3"></div>
          <div class="particle" style="--i:4"></div>
-         <div class="particle" style="--i:5"></div>
+         <div class="particle" style="--i:5"></div> 
      </div>
 
      <div class="hero-content">
@@ -32,7 +32,7 @@
              Global Members-Only Voting Competition
          </p>
 
-         <div class="hero-buttons" data-aos="fade-up" data-aos-delay="400">   
+         <div class="hero-buttons" data-aos="fade-up" data-aos-delay="400">
 
              <a href="{{ route('google-login', ['role' => 'contestant']) }}" class="btn btn-primary flex items-center gap-2">
                  <span class="bg-white text-dark rounded-full w-6 h-6 flex items-center justify-center font-bold text-xs">G</span>
@@ -43,7 +43,7 @@
                  <span class="bg-white text-indigo-600 rounded-full w-6 h-6 flex items-center justify-center font-bold text-xs">G</span>
                  Join as Member
              </a>
-             
+
          </div>
 
          <div class="mt-4" data-aos="fade-up" data-aos-delay="500">

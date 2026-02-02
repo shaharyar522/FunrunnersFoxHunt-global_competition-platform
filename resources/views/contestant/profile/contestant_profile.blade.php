@@ -35,7 +35,7 @@
                             </button>
                         </form>
                     </div>
-                    
+
                     <h1 class="text-3xl font-bold">Complete Your Profile</h1>
                     <p class="mt-2 text-indigo-100 opacity-80">This information will be visible to voters worldwide.</p>
                 </div>
@@ -57,8 +57,9 @@
                     </div>
                 @endif
 
-                <form action="{{ route('contestant.profile.store') }}" method="POST" enctype="multipart/form-data"
+                <form action="{{ route('contestant.storeProfile') }}" method="POST" enctype="multipart/form-data"
                     class="px-10 py-10 space-y-8">
+                    
                     @csrf
 
                     <!-- Profile Image -->
@@ -230,5 +231,5 @@
         </div>
     </div>
 
-    
+
 @endsection

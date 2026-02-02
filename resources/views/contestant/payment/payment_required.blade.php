@@ -41,7 +41,7 @@
                 </ul>
             </div>
 
-            <form action="{{ route('contestant.onboarding.pay') }}" method="POST">
+            <form action="{{ route('contestant.paymentProcess') }}" method="POST">
                 @csrf
                 <button type="submit" class="group relative w-full flex justify-center py-4 px-4 border border-transparent text-lg font-bold rounded-xl text-slate-900 bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-300 hover:to-orange-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all duration-300 transform hover:scale-[1.02]">
                     <span class="absolute left-0 inset-y-0 flex items-center pl-3">
@@ -52,7 +52,7 @@
                     Pay via Secure Stripe
                 </button>
             </form>
-            
+
             <p class="text-center text-xs text-slate-500 italic">
                 Secure 256-bit SSL Encrypted Payment
             </p>
