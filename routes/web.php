@@ -5,16 +5,14 @@ use App\Http\Controllers\SocialController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\VotingController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Contestant\ContestantController;
 use App\Http\Controllers\Member\MemberController;
 
 // =========================================================
 
 Route::get('/project', function () {
-
     return view('backup-page.project-flow');
-
-
 });
 
 // =======================================================================
@@ -22,6 +20,9 @@ Route::get('/project', function () {
 Route::get('/', [indexController::class, 'index']);
 Route::get('/live-results', [App\Http\Controllers\PublicResultsController::class, 'index'])->name('public.results.index');
 Route::get('/live-results/{id}', [App\Http\Controllers\PublicResultsController::class, 'show'])->name('public.results.show');
+
+// =================================================================== logout-profiles ===============
+
 
 
 // ================================================= login with Social icon =================================================
@@ -33,6 +34,7 @@ Route::get('login/google', [SocialController::class, 'redirectToGoogle'])->name(
 Route::get('login/google/callback', [SocialController::class, 'handleGoogleCallback']);
 
 // Twitter/X Login
+
 Route::get('/login/twitter', [SocialController::class, 'redirectToTwitter'])->name('twitter.login');
 Route::get('/login/twitter/callback', [SocialController::class, 'handleTwitterCallback']);
 
@@ -40,6 +42,10 @@ Route::get('/login/twitter/callback', [SocialController::class, 'handleTwitterCa
 // Facebook Login (Mock for now, until developer account is verified)
 Route::get('login/facebook', [SocialController::class, 'redirectToFacebookMock'])->name('facebook-login');
 
+// Manual Login/Logout
+
+Route::post('/login', [App\Http\Controllers\AuthController::class, 'login'])->name('login.post');
+Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
 
 
 // ================================================= Dashboards =================================================
@@ -75,7 +81,7 @@ Route::middleware('auth')->prefix('onboarding')->group(function () {
     Route::get('/profile-setup', [App\Http\Controllers\Contestant\ContestantOnboardingController::class, 'showProfileForm'])->name('contestant.profile.setup');
     Route::post('/profile-setup', [App\Http\Controllers\Contestant\ContestantOnboardingController::class, 'storeProfile'])->name('contestant.profile.store');
 
-}); 
+});
 
 // Member Onboarding Routes
 Route::middleware('auth')->prefix('member/onboarding')->group(function () {

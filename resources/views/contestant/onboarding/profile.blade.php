@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+
+
     <style>
         /* Force select options to be visible and have dark text */
         select option {
@@ -16,10 +18,24 @@
             /* slate-400 */
         }
     </style>
+
     <div class="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-3xl mx-auto">
             <div class="bg-white shadow-2xl rounded-3xl overflow-hidden border border-slate-100">
-                <div class="bg-gradient-to-r from-indigo-600 to-purple-700 px-10 py-12 text-white text-center">
+                <div class="relative bg-gradient-to-r from-indigo-600 to-purple-700 px-10 py-12 text-white text-center">
+                    <!-- Logout Button -->
+                    <div class="absolute top-4 right-6">
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-sm font-bold border border-white/20 transition-all active:scale-95">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
+                                Logout
+                            </button>
+                        </form>
+                    </div>
+                    
                     <h1 class="text-3xl font-bold">Complete Your Profile</h1>
                     <p class="mt-2 text-indigo-100 opacity-80">This information will be visible to voters worldwide.</p>
                 </div>
@@ -144,6 +160,25 @@
                         </div>
 
 
+                        <!-- Password Section -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Create Password</label>
+                                <input type="password" name="password"
+                                    class="w-full px-5 py-4 rounded-xl border-2 @error('password') border-red-300 @else border-slate-100 @enderror bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all text-slate-800 font-medium"
+                                    placeholder="Min. 8 characters" required>
+                                @error('password')
+                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Confirm Password</label>
+                                <input type="password" name="password_confirmation"
+                                    class="w-full px-5 py-4 rounded-xl border-2 border-slate-100 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all text-slate-800 font-medium"
+                                    placeholder="Repeat password" required>
+                            </div>
+                        </div>
+
                         <!-- Bio -->
                         <div>
                             <label class="block text-sm font-bold text-slate-700 mb-2">Your Story (Bio)</label>
@@ -194,4 +229,6 @@
             </div>
         </div>
     </div>
+
+    
 @endsection

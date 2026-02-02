@@ -17,33 +17,33 @@
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex">
-    
+
     <!-- Sidebar -->
     <div class="w-64 bg-slate-900 text-white flex flex-col">
         <div class="p-6">
             <h2 class="text-xl font-bold tracking-tight">Funrunners</h2>
         </div>
-        
+
         <nav class="flex-1 px-4 py-2 space-y-2">
             <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2.5 rounded-lg {{ request()->routeIs('admin.dashboard') ? 'bg-blue-600 font-medium' : 'text-slate-400 hover:text-white hover:bg-slate-800' }} transition-all">
                 Dashboard
             </a>
-            
+
              <a href="{{ route('admin.contestants.list') }}" class="block px-4 py-2.5 rounded-lg {{ request()->routeIs('admin.contestants.*') ? 'bg-blue-600 font-medium text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800' }} transition-all">
                 Contestants
             </a>
-            
+
             <a href="{{ route('admin.members.list') }}" class="block px-4 py-2.5 rounded-lg {{ request()->routeIs('admin.members.*') ? 'bg-blue-600 font-medium text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800' }} transition-all">
                 Member
             </a>
 
             <a href="{{ route('admin.regions.index') }}" class="block px-4 py-2.5 rounded-lg {{ request()->routeIs('admin.regions.*') ? 'bg-blue-600 font-medium text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800' }} transition-all">
                 Regions
-            </a>  
+            </a>
 
              <a href="{{ route('admin.voting.list') }}" class="block px-4 py-2.5 rounded-lg {{ request()->routeIs('admin.voting.*') ? 'bg-blue-600 font-medium text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800' }} transition-all">
                 Voting
-            </a> 
+            </a>
 
         </nav>
 
@@ -55,6 +55,10 @@
                 </button>
             </form>
         </div>
+
+
+
+
     </div>
 
     <!-- Main Content -->

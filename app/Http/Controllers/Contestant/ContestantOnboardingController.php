@@ -23,6 +23,7 @@ class ContestantOnboardingController extends Controller
      */
     public function index()
     {
+        
         $user = Auth::user();
         $contestant = Contestant::where('user_id', $user->id)->first();
 
@@ -37,6 +38,7 @@ class ContestantOnboardingController extends Controller
         }
 
         return view('contestant.onboarding.index');
+
     }
 
     /**
@@ -122,21 +124,24 @@ class ContestantOnboardingController extends Controller
             'contact' => 'required|string|max:255',
             'region' => 'required|exists:regions,id',
             'bio' => 'required|string',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
-
         $user = Auth::user();
+
+        // Update user password
+        $user->update([
+            'password' => bcrypt($request->password),
+        ]);
 
         // Handle image upload
         $imagePath = null;
         if ($request->hasFile('image')) {
-
             $file = $request->file('image');
             $filename = $user->id . '_' . time() . '.' . $file->getClientOriginalExtension();
             $path = $file->storeAs('contestants', $filename, 'public');
             $imagePath = '/storage/' . $path;
         }
-
 
         // Update or create contestant
         Contestant::updateOrCreate(

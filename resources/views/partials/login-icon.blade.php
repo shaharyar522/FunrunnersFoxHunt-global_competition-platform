@@ -47,7 +47,35 @@
 
             </div>
 
-            <p class="cta-footer">No email or phone signup needed - just social login</p>
+            <div class="mt-12 max-w-md mx-auto" data-aos="fade-up" data-aos-delay="250">
+                <div class="relative flex items-center justify-center mb-8">
+                    <div class="flex-grow border-t border-slate-700"></div>
+                    <span class="flex-shrink mx-4 text-slate-500 text-sm font-medium uppercase tracking-wider">Or login with email</span>
+                    <div class="flex-grow border-t border-slate-700"></div>
+                </div>
+
+                <form action="{{ route('login.post') }}" method="POST" class="space-y-4 text-left">
+                    @csrf
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1 ml-1">Email Address</label>
+                        <input type="email" name="email" required 
+                            class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-primary-gold transition-all"
+                            placeholder="Enter your email">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1 ml-1">Password</label>
+                        <input type="password" name="password" required 
+                            class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-primary-gold transition-all"
+                            placeholder="••••••••">
+                    </div>
+                    <button type="submit" 
+                        class="w-full py-4 bg-primary-gold text-slate-900 font-black rounded-xl hover:bg-yellow-500 transition-all transform active:scale-95 shadow-lg shadow-yellow-600/20">
+                        LOG IN NOW
+                    </button>
+                </form>
+            </div>
+
+            <p class="cta-footer mt-8">Register via Social and set your password in Profile to login here.</p>
 
         </div>
 

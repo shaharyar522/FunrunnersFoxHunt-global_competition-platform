@@ -68,22 +68,33 @@
             <form id="editForm">
                 <input type="hidden" id="edit_id">
                 <div class="px-6 py-4 space-y-4">
+
                     <div>
+                        
                         <label class="block text-sm font-medium text-gray-700">Full Name</label>
                         <input type="text" id="edit_name" name="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+
                     </div>
+
                     <div>
+
                         <label class="block text-sm font-medium text-gray-700">Phone / Contact</label>
                         <input type="text" id="edit_contact" name="contact" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+
                     </div>
+
                     <div>
+
                         <label class="block text-sm font-medium text-gray-700">Region</label>
+
                         <select id="edit_region" name="region_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
                             @foreach($regions as $region)
                                 <option value="{{ $region->id }}">{{ $region->name }}</option>
                             @endforeach
                         </select>
+
                     </div>
+
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Profile Status</label>
                         <select id="edit_profile_status" name="profile_status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
@@ -103,6 +114,7 @@
 </div>
 
 <script>
+  
 $(document).ready(function() {
     // CSRF Token Setup for jQuery
     $.ajaxSetup({

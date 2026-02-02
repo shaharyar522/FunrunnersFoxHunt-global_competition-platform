@@ -25,15 +25,17 @@
                         Funrunners
                     </a>
                 </div>
+
+
                 <div class="flex items-center space-x-4">
                     @auth
-                        <span class="text-sm text-gray-700 font-medium">{{ Auth::user()->name }}</span>
-                        <form action="{{ route('admin.logout') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="text-sm text-gray-500 hover:text-gray-700 font-medium">Logout</button>
-                        </form>
+                        <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="text-sm text-gray-500 hover:text-gray-700 font-medium">Logout</button>
+                            </form>
                     @endauth
                 </div>
+
             </div>
         </div>
     </nav>
@@ -49,5 +51,6 @@
         AOS.init({ duration: 1000, once: true });
     </script>
     @yield('scripts')
+
 </body>
 </html>
