@@ -7,7 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Member;
 use App\Interfaces\PaymentGatewayInterface;
 use Illuminate\Support\Facades\Auth;
-
+use App\Models\Voting;
+use App\Models\Vote;
 class MemberController extends Controller
 {
     protected $paymentGateway;
@@ -39,11 +40,13 @@ class MemberController extends Controller
 
         // 2. Check for payment or expired subscription
         if ($member->payment_status == 0 || ($member->subscription_ends_at && now()->gt($member->subscription_ends_at))) {
-            return view('member.onboarding.index', compact('member'));
+
+            return view('member.payment.payment_required', compact('member'));
+
         }
 
         // 3. Active member dashboard
-        $activeRounds = \App\Models\Voting::where('status', 1)->get();
+        $activeRounds = Voting::where('status', 1)->get();
 
         return view('member.dashboard', compact('member', 'activeRounds'));
     }
@@ -51,10 +54,11 @@ class MemberController extends Controller
     /**
      * Process Payment Action
      */
+
     public function paymentProcess()
     {
         $user = Auth::user();
-        
+
         $session = $this->paymentGateway->createSubscriptionSession(
             5.00, // $5 Monthly Membership
             'usd',
@@ -66,13 +70,14 @@ class MemberController extends Controller
         return redirect($session->url);
     }
 
+
     /**
      * Handle Success Payment Action
      */
     public function paymentSuccess()
     {
         $user = Auth::user();
-        
+
         Member::updateOrCreate(
             ['user_id' => $user->id],
             [
@@ -88,33 +93,41 @@ class MemberController extends Controller
             ->with('success', 'Welcome! Your monthly membership is now active.');
     }
 
+
     public function showVotingRound($voting_id)
     {
-        $voting = \App\Models\Voting::with(['votingContestants.contestant.questions' => function($q) {
+
+        $voting = Voting::with(['votingContestants.contestant.questions' => function($q) {
             $q->where('is_answered', true)->with('member')->orderBy('created_at', 'desc');
         }])->findOrFail($voting_id);
 
         // Check if user has already voted
-        $userVote = \App\Models\Vote::where('user_id', Auth::id())
+        $userVote = Vote::where('user_id', Auth::id())
                                     ->where('voting_id', $voting_id)
                                     ->first();
 
         $votedContestantId = $userVote ? $userVote->contestant_id : null;
 
         return view('member.contestants.index', compact('voting', 'votedContestantId'));
+
+
     }
 
-    public function liveResults($voting_id)
-    {
-        $voting = \App\Models\Voting::findOrFail($voting_id);
 
-        $results = \App\Models\Vote::where('voting_id', $voting_id)
-            ->select('contestant_id', \Illuminate\Support\Facades\DB::raw('count(*) as total_votes'))
-            ->groupBy('contestant_id')
-            ->orderByDesc('total_votes')
-            ->with(['contestant'])
-            ->get();
+    // public function liveResults($voting_id)
+    // {
+    //     $voting = Voting::findOrFail($voting_id);
 
-        return view('member.results.index', compact('voting', 'results'));
-    }
+    //     $results = Vote::where('voting_id', $voting_id)
+    //         ->select('contestant_id', \Illuminate\Support\Facades\DB::raw('count(*) as total_votes'))
+    //         ->groupBy('contestant_id')
+    //         ->orderByDesc('total_votes')
+    //         ->with(['contestant'])
+    //         ->get();
+
+    //     return view('member.results.index', compact('voting', 'results'));
+    // }
+
+
+
 }
