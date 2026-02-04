@@ -17,7 +17,7 @@
          <div class="particle" style="--i:2"></div>
          <div class="particle" style="--i:3"></div>
          <div class="particle" style="--i:4"></div>
-         <div class="particle" style="--i:5"></div> 
+         <div class="particle" style="--i:5"></div>
      </div>
 
      <div class="hero-content">
@@ -41,7 +41,9 @@
 
              <a href="{{ route('google-login', ['role' => 'member']) }}" class="btn btn-secondary flex items-center gap-2">
                  <span class="bg-white text-indigo-600 rounded-full w-6 h-6 flex items-center justify-center font-bold text-xs">G</span>
+
                  Join as Member
+
              </a>
 
          </div>

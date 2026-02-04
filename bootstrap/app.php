@@ -21,7 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
             guests: '/admin/login'
         );
     })
-    
+
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();

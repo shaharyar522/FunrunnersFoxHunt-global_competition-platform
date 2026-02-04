@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\indexController;
 use App\Http\Controllers\SocialController;
 use Illuminate\Support\Facades\Route;
@@ -12,7 +13,7 @@ use App\Http\Controllers\Member\MemberController;
 
 
 
-// =========================================================
+
 
 
 
@@ -20,7 +21,9 @@ use App\Http\Controllers\Member\MemberController;
 
 
 Route::get('/project', function () {
+
     return view('backup-page.project-flow');
+
 });
 
 
@@ -28,12 +31,15 @@ Route::get('/project', function () {
 
 // =======================================================================
 Route::get('/', [indexController::class, 'index']);
+
 // Route::get('/live-results', [App\Http\Controllers\PublicResultsController::class, 'index'])->name('public.results.index');
 // Route::get('/live-results/{id}', [App\Http\Controllers\PublicResultsController::class, 'show'])->name('public.results.show');
 // =================================================================== logout-profiles ===============
 // ================================================= login with Social icon =================================================
 // Google Login
+
 Route::get('login/google', [SocialController::class, 'redirectToGoogle'])->name('google-login');
+
 Route::get('login/google/callback', [SocialController::class, 'handleGoogleCallback']);
 // Twitter/X Login
 Route::get('/login/twitter', [SocialController::class, 'redirectToTwitter'])->name('twitter.login');
@@ -76,32 +82,35 @@ Route::middleware(['auth', 'unpaid_contestant'])->group(function () {
 
        Route::get('/contestant-dashboard', [ContestantController::class, 'dashboard'])->name('contestant.dashboard');
 
+
 });
 
-// Member Dashboard (requires subscription)
+
+// Member Routes (Consolidated)
 Route::middleware(['auth', 'unpaid_member'])->group(function () {
-    Route::get('/member-dashboard', [App\Http\Controllers\Member\MemberController::class, 'dashboard'])->name('member.dashboard');
-    Route::get('/member/voting/{voting}', [App\Http\Controllers\Member\MemberController::class, 'showVotingRound'])->name('member.voting.show');
+    Route::get('/member-dashboard', [MemberController::class, 'dashboard'])->name('member.dashboard');
+    Route::post('/member/pay', [MemberController::class, 'paymentProcess'])->name('member.paymentProcess');
+    Route::get('/member/success', [MemberController::class, 'paymentSuccess'])->name('member.paymentSuccess');
+    
+    Route::get('/member/voting/{voting}', [MemberController::class, 'showVotingRound'])->name('member.voting.show');
     Route::post('/member/vote/{voting}/{contestant}', [App\Http\Controllers\VoteController::class, 'store'])->name('member.vote.store');
-    Route::get('/member/results/{voting}', [App\Http\Controllers\Member\MemberController::class, 'liveResults'])->name('member.results.show');
+    Route::get('/member/results/{voting}', [MemberController::class, 'liveResults'])->name('member.results.show');
     Route::post('/member/contestant/{contestant}/question', [App\Http\Controllers\QuestionController::class, 'store'])->name('member.contestant.question.store');
 });
+
+
 
 
 // ================================================================================= Payment_Processing =================================================================================
 // Contestant paymentProcess (Processing only, Views handled by Dashboard)
 Route::middleware('auth')->prefix('onboarding')->group(function () {
+
     Route::post('/pay', [ContestantController::class, 'paymentProcess'])->name('contestant.paymentProcess');
     Route::get('/success', [ContestantController::class, 'paymentSuccess'])->name('contestant.paymentSuccess');
     Route::post('/profile-setup', [ContestantController::class, 'storeProfile'])->name('contestant.storeProfile');
+    
 });
 
-// Member Onboarding Routes
-Route::middleware('auth')->prefix('member/onboarding')->group(function () {
-    Route::get('/', [App\Http\Controllers\Member\MemberOnboardingController::class, 'index'])->name('member.onboarding.index');
-    Route::post('/pay', [App\Http\Controllers\Member\MemberOnboardingController::class, 'processPayment'])->name('member.onboarding.pay');
-    Route::get('/success', [App\Http\Controllers\Member\MemberOnboardingController::class, 'paymentSuccess'])->name('member.onboarding.success');
-});
 
 // =================================================================================  End Payment_Processing =================================================================================
 

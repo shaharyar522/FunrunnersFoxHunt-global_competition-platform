@@ -14,7 +14,7 @@
                     <span class="text-slate-400">/monthly</span>
                 </div>
 
-                <form action="{{ route('member.onboarding.pay') }}" method="POST">
+                <form action="{{ route('member.paymentProcess') }}" method="POST">
                     @csrf
                     <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center space-x-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
@@ -12,23 +13,35 @@ class SocialController extends Controller
     // -------------------
     // GOOGLE LOGIN
     // -------------------
+
     public function redirectToGoogle(Request $request)
+
     {
+
+
         if ($request->has('role')) {
+
             session(['intended_role' => $request->role]);
         }
+
         return Socialite::driver('google')->redirect();
     }
+
 
     public function handleGoogleCallback()
     {
 
+
         $socialUser = Socialite::driver('google')->user();
+
         $role = session('intended_role', 'member'); // Default to member if not set
+
         $user = $this->findOrCreateUser($socialUser, 'google', $role);
+
         Auth::login($user);
 
         session()->forget('intended_role');
+
         return $this->redirectToDashboard($user);
     }
 
@@ -130,7 +143,6 @@ class SocialController extends Controller
                     'status' => 1
 
                 ]);
-
             }
 
             // Redirection logic: All flows now start at the unified dashboard
@@ -154,6 +166,7 @@ class SocialController extends Controller
             }
             return redirect()->route('member.dashboard');
         }
+        
 
         return redirect()->route('admin.dashboard');
     }

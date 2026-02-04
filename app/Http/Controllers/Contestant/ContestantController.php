@@ -22,6 +22,7 @@ class ContestantController extends Controller
      * Main Dashboard: Handles showing the correct view (Payment, Profile Setup, or Dashboard)
      * based on the contestant's current status.
      */
+
     public function dashboard()
     {
         $user = Auth::user();
@@ -29,24 +30,30 @@ class ContestantController extends Controller
 
         // 1. Ensure contestant record exists
         if (!$contestant) {
+
             $contestant = Contestant::create([
+
                 'user_id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
                 'payment_status' => 0,
                 'profile_status' => 0,
                 'status' => 1
+
             ]);
         }
 
         // 2. State: Unpaid
         if ($contestant->payment_status == 0) {
+
             return view('contestant.payment.payment_required');
         }
 
         // 3. State: Paid but Profile Incomplete
         if ($contestant->profile_status == 0) {
+
             $regions = Region::all();
+
             return view('contestant.profile.contestant_profile', compact('contestant', 'regions'));
         }
 
@@ -57,6 +64,7 @@ class ContestantController extends Controller
     /**
      * Process Payment Action
      */
+
     public function paymentProcess()
     {
         $user = Auth::user();
@@ -75,6 +83,7 @@ class ContestantController extends Controller
     /**
      * Handle Success Payment Action
      */
+
     public function paymentSuccess()
     {
         $user = Auth::user();
@@ -92,6 +101,7 @@ class ContestantController extends Controller
         return redirect()->route('contestant.dashboard')
             ->with('success', 'Payment successful! Please complete your profile');
     }
+
 
     /**
      * Store Profile Action
