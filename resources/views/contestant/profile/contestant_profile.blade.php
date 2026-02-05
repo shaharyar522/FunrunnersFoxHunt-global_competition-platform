@@ -161,25 +161,6 @@
                         </div>
 
 
-                        <!-- Password Section -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-sm font-bold text-slate-700 mb-2">Create Password</label>
-                                <input type="password" name="password"
-                                    class="w-full px-5 py-4 rounded-xl border-2 @error('password') border-red-300 @else border-slate-100 @enderror bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all text-slate-800 font-medium"
-                                    placeholder="Min. 8 characters" required>
-                                @error('password')
-                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            <div>
-                                <label class="block text-sm font-bold text-slate-700 mb-2">Confirm Password</label>
-                                <input type="password" name="password_confirmation"
-                                    class="w-full px-5 py-4 rounded-xl border-2 border-slate-100 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all text-slate-800 font-medium"
-                                    placeholder="Repeat password" required>
-                            </div>
-                        </div>
-
                         <!-- Bio -->
                         <div>
                             <label class="block text-sm font-bold text-slate-700 mb-2">Your Story (Bio)</label>

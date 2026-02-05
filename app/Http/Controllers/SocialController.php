@@ -129,23 +129,8 @@ class SocialController extends Controller
     {
         if ($user->role == 'contestant') {
 
-            $contestant = \App\Models\Contestant::where('user_id', $user->id)->first();
-
-            if (!$contestant) {
-
-                $contestant = \App\Models\Contestant::create([
-
-                    'user_id' => $user->id,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'payment_status' => 0,
-                    'profile_status' => 0,
-                    'status' => 1
-
-                ]);
-            }
-
-            // Redirection logic: All flows now start at the unified dashboard
+            // Don't create contestant record here - let dashboard handle the flow
+            // Flow: Login -> Dashboard checks payment -> Payment -> Profile -> Dashboard
             return redirect()->route('contestant.dashboard');
         }
 

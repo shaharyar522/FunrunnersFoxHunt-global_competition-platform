@@ -43,13 +43,24 @@ class ContestantController extends Controller
             ]);
         }
 
-        // 2. State: Unpaid
+        // 2. Check if contestant already paid (query voting_contestants table)
+        $votingContestant = \App\Models\VotingContestant::where('contestant_id', $contestant->id)
+            ->limit(1)
+            ->first();
+
+        // If entry exists in voting_contestants, contestant has already paid
+        if ($votingContestant) {
+            $contestant->payment_status = 1;
+            $contestant->save();
+        }
+
+        // 3. State: Unpaid - Show payment page
         if ($contestant->payment_status == 0) {
 
             return view('contestant.payment.payment_required');
         }
 
-        // 3. State: Paid but Profile Incomplete
+        // 4. State: Paid but Profile Incomplete
         if ($contestant->profile_status == 0) {
 
             $regions = Region::all();
@@ -57,8 +68,9 @@ class ContestantController extends Controller
             return view('contestant.profile.contestant_profile', compact('contestant', 'regions'));
         }
 
-        // 4. State: Fully registered
+        // 5. State: Fully registered
         return view('contestant.dashboard', compact('contestant'));
+        
     }
 
     /**
@@ -88,7 +100,8 @@ class ContestantController extends Controller
     {
         $user = Auth::user();
 
-        Contestant::updateOrCreate(
+        // Update contestant payment status
+        $contestant = Contestant::updateOrCreate(
             ['user_id' => $user->id],
             [
                 'name' => $user->name,
@@ -97,6 +110,20 @@ class ContestantController extends Controller
                 'status' => 0,
             ]
         );
+
+        // Check if entry already exists in voting_contestants (prevent duplicate payments)
+        $existingEntry = \App\Models\VotingContestant::where('contestant_id', $contestant->id)
+            ->limit(1)
+            ->first();
+
+        // Only create entry if it doesn't exist (one-time payment)
+        if (!$existingEntry) {
+            \App\Models\VotingContestant::create([
+                'voting_id' => null, // Will be assigned when admin creates voting round
+                'contestant_id' => $contestant->id,
+                'payments' => 5.00, // Entry fee amount
+            ]);
+        }
 
         return redirect()->route('contestant.dashboard')
             ->with('success', 'Payment successful! Please complete your profile');
@@ -115,15 +142,9 @@ class ContestantController extends Controller
             'contact' => 'required|string|max:255',
             'region' => 'required|exists:regions,id',
             'bio' => 'required|string',
-            'password' => 'required|string|min:8|confirmed',
         ]);
 
         $user = Auth::user();
-
-        // Update user password
-        $user->update([
-            'password' => bcrypt($request->password),
-        ]);
 
         // Handle image upload
         $imagePath = null;

@@ -32,7 +32,9 @@
 
                         </tr>
                     </thead>
+
                     <tbody class="divide-y divide-gray-100">
+
                         @foreach ($votings as $index => $voting)
                             <tr class="hover:bg-gray-50 transition-all">
                                 <td class="px-8 py-5 text-sm text-gray-600">{{ $index + 1 }}</td>
@@ -41,7 +43,9 @@
                                 <td class="px-8 py-5">
                                     <form action="{{ route('admin.voting.status', $voting->voting_id) }}" method="POST">
                                         @csrf
+
                                         <button type="submit" class="focus:outline-none">
+
                                             @if ($voting->status == 0)
                                                 <span
                                                     class="px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">Pending</span>
@@ -52,7 +56,9 @@
                                                 <span
                                                     class="px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">Closed</span>
                                             @endif
+
                                         </button>
+
                                     </form>
 
                                 </td>
@@ -82,11 +88,13 @@
                                         </button>
 
                                     </form> --}}
-                                    
+
                                 </td>
                             </tr>
                         @endforeach
+
                     </tbody>
+
                 </table>
             </div>
         </div>

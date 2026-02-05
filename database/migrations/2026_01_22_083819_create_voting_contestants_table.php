@@ -17,11 +17,11 @@ return new class extends Migration
         Schema::create('voting_contestants', function (Blueprint $table) {
 
             $table->id();
-            $table->foreignId('voting_id')->constrained('votings', 'voting_id')->onDelete('cascade');
+            $table->foreignId('voting_id')->nullable()->constrained('votings', 'voting_id')->onDelete('cascade');
             $table->foreignId('contestant_id')->constrained('contestants')->onDelete('cascade');
-            $table->tinyInteger('status')->default(1); // 0=blocked, 1=active in voting
             $table->decimal('payments', 10, 2)->default(0); // payment amount
             $table->timestamps();
+
         });
     }
 

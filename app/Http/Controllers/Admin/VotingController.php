@@ -24,6 +24,7 @@ class VotingController extends Controller
 
     public function changeStatus($id)
     {
+
         $voting = Voting::findOrFail($id);
 
         // 0=pending, 1=open, 2=close
@@ -42,19 +43,7 @@ class VotingController extends Controller
         return back()->with('success', 'Voting status updated to ' . ($voting->status == 1 ? 'Open' : ($voting->status == 2 ? 'Closed' : 'Pending')));
     }
 
-    /**
-     * Sync all open rounds to have the same end time.
-     */
-    public function syncEndTimes(Request $request)
-    {
-        $request->validate([
-            'closed_at' => 'required|date'
-        ]);
-
-        Voting::where('status', 1)->update(['closed_at' => $request->closed_at]);
-
-        return back()->with('success', 'All open voting rounds have been synced to the new end time.');
-    }
+  
 
 
  // Show Add Voting Form
@@ -81,7 +70,7 @@ class VotingController extends Controller
             'title' => $request->title,
             'creationdate' => Carbon::now()->toDateString(),
             'status' => $request->status ?? 0, // Pending => 0 , open => 1, close => 2
-            
+
         ]);
 
 

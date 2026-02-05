@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Member;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Member;
+use App\Models\MemberSubscription;
 use App\Interfaces\PaymentGatewayInterface;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Voting;
 use App\Models\Vote;
+
 class MemberController extends Controller
 {
     protected $paymentGateway;
@@ -25,10 +27,12 @@ class MemberController extends Controller
     public function dashboard()
     {
         $user = Auth::user();
+
         $member = Member::where('user_id', $user->id)->first();
 
         // 1. Ensure member record exists
-        if (!$member) {
+        if(!$member) {
+            
             $member = Member::create([
                 'user_id' => $user->id,
                 'name' => $user->name,
@@ -36,18 +40,35 @@ class MemberController extends Controller
                 'payment_status' => 0,
                 'status' => 1,
             ]);
+
         }
 
-        // 2. Check for payment or expired subscription
+        // 2. Check if member has active subscription in member_subscriptions table
+        $subscription = MemberSubscription::where('member_id', $member->id)
+            ->where('status', 1)
+            ->limit(1)
+            ->first();
+
+        // If subscription exists, update member payment status
+        if ($subscription) {
+            $member->payment_status = 1;
+            $member->save();
+        }
+
+        // 3. Check for payment or expired subscription
         if ($member->payment_status == 0 || ($member->subscription_ends_at && now()->gt($member->subscription_ends_at))) {
+            
+            // Mark subscription as expired if exists
+            if ($subscription) {
+                $subscription->status = 0;
+                $subscription->save();
+            }
 
             return view('member.payment.payment_required', compact('member'));
-
         }
 
-        // 3. Active member dashboard
+        // 4. Active member dashboard
         $activeRounds = Voting::where('status', 1)->get();
-
         return view('member.dashboard', compact('member', 'activeRounds'));
     }
 
@@ -78,7 +99,8 @@ class MemberController extends Controller
     {
         $user = Auth::user();
 
-        Member::updateOrCreate(
+        // Update member record
+        $member = Member::updateOrCreate(
             ['user_id' => $user->id],
             [
                 'name' => $user->name,
@@ -89,9 +111,28 @@ class MemberController extends Controller
             ]
         );
 
+        // Check if active subscription already exists (prevent duplicate)
+        $existingSubscription = MemberSubscription::where('member_id', $member->id)
+            ->where('status', 1)
+            ->limit(1)
+            ->first();
+
+        // Create new subscription entry if doesn't exist
+        if (!$existingSubscription) {
+            MemberSubscription::create([
+                'member_id' => $member->id,
+                'status' => 1,
+                'payments' => 5.00,
+            ]);
+        }
+
         return redirect()->route('member.dashboard')
             ->with('success', 'Welcome! Your monthly membership is now active.');
     }
+
+
+    // only show voting  in votingContestants write now ..?
+
 
 
     public function showVotingRound($voting_id)
@@ -114,19 +155,19 @@ class MemberController extends Controller
     }
 
 
-    // public function liveResults($voting_id)
-    // {
-    //     $voting = Voting::findOrFail($voting_id);
+    public function liveResults($voting_id)
+    {
+        $voting = Voting::findOrFail($voting_id);
 
-    //     $results = Vote::where('voting_id', $voting_id)
-    //         ->select('contestant_id', \Illuminate\Support\Facades\DB::raw('count(*) as total_votes'))
-    //         ->groupBy('contestant_id')
-    //         ->orderByDesc('total_votes')
-    //         ->with(['contestant'])
-    //         ->get();
+        $results = Vote::where('voting_id', $voting_id)
+            ->select('contestant_id', \Illuminate\Support\Facades\DB::raw('count(*) as total_votes'))
+            ->groupBy('contestant_id')
+            ->orderByDesc('total_votes')
+            ->with(['contestant'])
+            ->get();
 
-    //     return view('member.results.index', compact('voting', 'results'));
-    // }
+        return view('member.results.index', compact('voting', 'results'));
+    }
 
 
 

@@ -91,11 +91,11 @@ Route::middleware(['auth', 'unpaid_member'])->group(function () {
     Route::get('/member-dashboard', [MemberController::class, 'dashboard'])->name('member.dashboard');
     Route::post('/member/pay', [MemberController::class, 'paymentProcess'])->name('member.paymentProcess');
     Route::get('/member/success', [MemberController::class, 'paymentSuccess'])->name('member.paymentSuccess');
-    
+
     Route::get('/member/voting/{voting}', [MemberController::class, 'showVotingRound'])->name('member.voting.show');
     Route::post('/member/vote/{voting}/{contestant}', [App\Http\Controllers\VoteController::class, 'store'])->name('member.vote.store');
     Route::get('/member/results/{voting}', [MemberController::class, 'liveResults'])->name('member.results.show');
-    Route::post('/member/contestant/{contestant}/question', [App\Http\Controllers\QuestionController::class, 'store'])->name('member.contestant.question.store');
+
 });
 
 
@@ -108,7 +108,7 @@ Route::middleware('auth')->prefix('onboarding')->group(function () {
     Route::post('/pay', [ContestantController::class, 'paymentProcess'])->name('contestant.paymentProcess');
     Route::get('/success', [ContestantController::class, 'paymentSuccess'])->name('contestant.paymentSuccess');
     Route::post('/profile-setup', [ContestantController::class, 'storeProfile'])->name('contestant.storeProfile');
-    
+
 });
 
 
@@ -184,11 +184,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     Route::post('/voting/status/{id}', [VotingController::class, 'changeStatus'])
         ->name('admin.voting.status');
-
-    Route::post('/voting/sync-end-times', [VotingController::class, 'syncEndTimes'])
-        ->name('admin.voting.sync');
-
-
+        
     // create voting
     Route::get('/voting/create', [VotingController::class, 'create'])->name('admin.voting.create');
     Route::post('/voting/store', [VotingController::class, 'store'])->name('admin.votings.store');
