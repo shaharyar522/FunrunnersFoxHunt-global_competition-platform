@@ -70,7 +70,7 @@ class ContestantController extends Controller
 
         // 5. State: Fully registered
         return view('contestant.dashboard', compact('contestant'));
-        
+
     }
 
     /**
@@ -137,10 +137,10 @@ class ContestantController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'image' => 'required|image',
-            'age' => 'required|integer|min:18',
+            'image' => 'nullable|image',
+            'dob' => 'required|date|before:today',
             'contact' => 'required|string|max:255',
-            'region' => 'required|exists:regions,id',
+            'region' => 'nullable',
             'bio' => 'required|string',
         ]);
 
@@ -163,7 +163,9 @@ class ContestantController extends Controller
                 'email' => $user->email,
                 'contact' => $request->contact,
                 'region_id' => $request->region,
-                'image' => $imagePath,
+                'dob' => $request->dob,
+                'bio' => $request->bio,
+                'image' => $imagePath ?? $user->contestant?->image,
                 'profile_status' => 1,
                 'payment_status' => 1,
                 'status' => 0,

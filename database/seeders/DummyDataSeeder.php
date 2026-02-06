@@ -44,6 +44,7 @@ class DummyDataSeeder extends Seeder
                 'payment_status' => rand(0, 1), // random paid or not paid
                 'status' => 1, // active
             ]);
+            
         }
 
         // -----------------------------

@@ -117,9 +117,6 @@
                                             d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                     </svg>
                                     {{ $contestant->region->name ?? 'Unknown Region' }}
-                                    @if ($contestant->age)
-                                        <span class="mx-2">•</span> {{ $contestant->age }} years
-                                    @endif
                                 </p>
                             </div>
                         </div>

@@ -57,9 +57,9 @@
                     </div>
                 @endif
 
-                <form action="{{ route('contestant.storeProfile') }}" method="POST" enctype="multipart/form-data"
+                <form id="profileForm" action="{{ route('contestant.storeProfile') }}" method="POST" enctype="multipart/form-data"
                     class="px-10 py-10 space-y-8">
-                    
+
                     @csrf
 
                     <!-- Profile Image -->
@@ -107,13 +107,13 @@
                             @enderror
                         </div>
 
-                        <!-- Age -->
+                        <!-- Date of Birth -->
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2">Your Age</label>
-                            <input type="number" name="age" value="{{ old('age', $contestant?->age) }}" min="18" max="100"
-                                class="w-full px-5 py-4 rounded-xl border-2 @error('age') border-red-300 @else border-slate-100 @enderror bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all text-slate-800 font-medium"
-                                placeholder="Minimum age is 18" required>
-                            @error('age')
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Date of Birth</label>
+                            <input type="date" name="dob" value="{{ old('dob', $contestant?->dob) }}"
+                                class="w-full px-5 py-4 rounded-xl border-2 @error('dob') border-red-300 @else border-slate-100 @enderror bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all text-slate-800 font-medium"
+                                required>
+                            @error('dob')
                                 <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
@@ -136,7 +136,7 @@
                             <div class="relative">
                                 <select name="region"
                                     class="w-full px-5 py-4 rounded-xl border-2 @error('region') border-red-300 @else border-slate-100 @enderror bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all text-slate-800 font-medium appearance-none cursor-pointer"
-                                    required>
+                                    >
                                     <option value="" class="text-slate-400">Select your region</option>
 
                                     @foreach ($regions as $region)
@@ -177,16 +177,22 @@
                     </div>
 
                     <div class="pt-8">
-                        <button type="submit"
-                            class="group relative w-full flex justify-center py-4 px-4 border border-transparent text-lg font-black rounded-2xl text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 shadow-xl hover:shadow-indigo-500/25 active:scale-95">
-                            <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                        <button type="submit" id="submitBtn"
+                            class="group relative w-full flex justify-center py-4 px-4 border border-transparent text-lg font-black rounded-2xl text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 shadow-xl hover:shadow-indigo-500/25 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed">
+                            <span class="absolute left-0 inset-y-0 flex items-center pl-3 btn-icon transition-all">
                                 <svg class="h-5 w-5 text-indigo-300 group-hover:text-indigo-100 transition-colors"
                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                             </span>
-                            SUBMIT PROFILE
+                            <span id="btnText">SUBMIT PROFILE</span>
+                            <span id="btnLoader" class="hidden ml-3">
+                                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </span>
                         </button>
                         <p class="mt-4 text-center text-xs text-slate-400">By submitting, you agree to follow the community
                             guidelines.</p>
@@ -207,6 +213,18 @@
                             reader.readAsDataURL(input.files[0]);
                         }
                     }
+
+                    document.getElementById('profileForm').addEventListener('submit', function() {
+                        const btn = document.getElementById('submitBtn');
+                        const text = document.getElementById('btnText');
+                        const loader = document.getElementById('btnLoader');
+                        const icon = document.querySelector('.btn-icon');
+
+                        btn.disabled = true;
+                        text.innerText = 'PROCESSING...';
+                        loader.classList.remove('hidden');
+                        if (icon) icon.classList.add('opacity-0');
+                    });
                 </script>
             </div>
         </div>

@@ -11,6 +11,7 @@ class DatabaseSeeder extends Seeder
     use WithoutModelEvents;
 
     /**
+     * 
      * Seed the application's database.
      */
     public function run(): void
@@ -18,8 +19,8 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
        $this->call([
          AdminSeeder::class,
-         DummyDataSeeder::class,
        ]);
-     
+
     }
+
 }

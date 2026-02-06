@@ -49,14 +49,18 @@ class MemberController extends Controller
             ->limit(1)
             ->first();
 
-        // If subscription exists, update member payment status
+        // Sync payment status based on subscription table
         if ($subscription) {
             $member->payment_status = 1;
+            $member->save();
+        } else {
+            // If no active subscription record found, ensure payment_status is 0
+            $member->payment_status = 0;
             $member->save();
         }
 
         // 3. Check for payment or expired subscription
-        if ($member->payment_status == 0 || ($member->subscription_ends_at && now()->gt($member->subscription_ends_at))) {
+        if ($member->payment_status == 0 || !$member->subscription_ends_at || now()->gt($member->subscription_ends_at)) {
             
             // Mark subscription as expired if exists
             if ($subscription) {

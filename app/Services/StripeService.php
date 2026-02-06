@@ -5,18 +5,22 @@ use Stripe\StripeClient;
 
 class StripeService implements PaymentGatewayInterface
 {
-    
+
 
     protected $stripe;
 
     public function __construct()
     {
+
         $this->stripe = new StripeClient(config('services.stripe.secret') ?? env('STRIPE_SECRET'));
+
     }
 
     public function createCheckoutSession(float $amount, string $currency, string $successUrl, string $cancelUrl, array $metadata = [])
     {
+
         return $this->stripe->checkout->sessions->create([
+
             'payment_method_types' => ['card'],
             'line_items' => [[
                 'price_data' => [
@@ -33,7 +37,9 @@ class StripeService implements PaymentGatewayInterface
             'success_url' => $successUrl,
             'cancel_url' => $cancelUrl,
             'metadata' => $metadata,
+            
         ]);
+
     }
 
     public function createSubscriptionSession(float $amount, string $currency, string $successUrl, string $cancelUrl, array $metadata = [])

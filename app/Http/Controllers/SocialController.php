@@ -135,20 +135,7 @@ class SocialController extends Controller
         }
 
         if ($user->role == 'member') {
-            // ... (keep existing member logic)
-            $member = \App\Models\Member::where('user_id', $user->id)->first();
-            if (!$member || !$member->subscription_ends_at) {
-                \App\Models\Member::updateOrCreate(
-                    ['user_id' => $user->id],
-                    [
-                        'name' => $user->name,
-                        'email' => $user->email,
-                        'payment_status' => 1,
-                        'subscription_ends_at' => now()->addMonth(),
-                        'status' => 1,
-                    ]
-                );
-            }
+            // Flow: Login -> Dashboard checks subscription -> Payment if needed
             return redirect()->route('member.dashboard');
         }
         

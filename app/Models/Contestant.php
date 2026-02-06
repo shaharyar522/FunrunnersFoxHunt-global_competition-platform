@@ -16,12 +16,21 @@ class Contestant extends Model
         'contact',
         'region_id',
         'image',
-        'age',
+        'dob',
         'bio',
         'payment_status',
         'profile_status',
         'status',
     ];
+
+    protected $casts = [
+        'dob' => 'date',
+    ];
+
+    public function getAgeAttribute()
+    {
+        return $this->dob ? $this->dob->age : null;
+    }
 
     /**
      * The votings that this contestant belongs to.

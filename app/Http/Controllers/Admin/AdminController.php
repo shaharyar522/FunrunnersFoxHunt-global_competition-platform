@@ -99,6 +99,7 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'contact' => 'nullable|string|max:20',
             'region_id' => 'required|exists:regions,id',
+            'dob' => 'nullable|date',
             'profile_status' => 'required|in:0,1',
         ]);
 
