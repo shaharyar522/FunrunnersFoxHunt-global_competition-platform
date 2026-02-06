@@ -1,95 +1,65 @@
-@extends('layouts.app')
+@extends('layouts.contestant')
+
+@section('title', 'Contestant Dashboard')
+@section('page_title', 'Overview Statistics')
 
 @section('content')
-<div class="container mx-auto px-4 py-8">
-    <div class="max-w-4xl mx-auto">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-            <h1 class="text-3xl font-bold text-gray-900">Contestant Dashboard</h1>
-            {{-- <a href="{{ route('contestant.questions.index') }}" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium shadow-sm flex items-center">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
-                My Questions
-            </a> --}}
+
+<div class="space-y-6">
+
+    <!-- Simple Summary Table -->
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+            <h2 class="text-md font-bold text-gray-700 uppercase tracking-tight">Competition Summary</h2>
+            <a href="{{ route('contestant.profile') }}" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold shadow hover:bg-blue-700 transition">Edit Profile</a>
         </div>
 
-        @if($contestant)
-        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-
-            <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-                <div>
-                    <h3 class="text-lg leading-6 font-medium text-gray-900">Profile Information</h3>
-                    <p class="mt-1 max-w-2xl text-sm text-gray-500">Personal details and application status.</p>
-                </div>
-                <img src="{{ $contestant->image }}" alt="Profile" class="h-20 w-20 rounded-full object-cover border-2 border-indigo-500">
-            </div>
-
-            <div class="border-t border-gray-200">
-
-                <dl>
-
-                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">Full name</dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $contestant->name }}</dd>
-                    </div>
-                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">Date of Birth</dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                            {{ $contestant->dob?->format('M d, Y') ?? 'Not set' }}
-                        </dd>
-                    </div>
-                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">Region</dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $contestant->region->name ?? 'Not assigned' }}</dd>
-                    </div>
-                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">Bio</dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 text-justify">{{ $contestant->bio ?? 'No bio written yet.' }}</dd>
-                    </div>
-                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">Contact</dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $contestant->contact ?? 'Not set' }}</dd>
-                    </div>
-                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-b">
-                        <dt class="text-sm font-medium text-gray-500">Email Address</dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $contestant->email }}</dd>
-                    </div>
-                    <div class="bg-indigo-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-bold text-indigo-700">Account Status</dt>
-                        <dd class="mt-1 sm:mt-0 sm:col-span-2">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
+                    <tr>
+                        <th class="px-6 py-4 font-bold border-b">Title (Round)</th>
+                        <th class="px-6 py-4 font-bold border-b">Date</th>
+                        <th class="px-6 py-4 font-bold border-b">Status</th>
+                        <th class="px-6 py-4 font-bold border-b">My Region</th>
+                        <th class="px-6 py-4 font-bold border-b text-center">Contestants in My Round</th>
+                        <th class="px-6 py-4 font-bold border-b text-center">Applying Contestants</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    <tr class="hover:bg-gray-50 transition-all">
+                        <td class="px-6 py-5 text-sm font-medium text-gray-900 text-blue-600">
+                            {{ $voting_data?->voting?->title ?? 'Waiting for Round Assignment' }}
+                        </td>
+                        <td class="px-6 py-5 text-sm text-gray-600">
+                            {{ $current_date }}
+                        </td>
+                        <td class="px-6 py-5">
                             @if($contestant->status == 1)
-                                <span class="px-4 py-1.5 inline-flex text-sm leading-5 font-bold rounded-full bg-green-100 text-green-800 border border-green-200">
-                                    <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                    Official Approved
-                                </span>
+                                <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 border border-green-200">Official Approved</span>
                             @else
-                                <span class="px-4 py-1.5 inline-flex text-sm leading-5 font-bold rounded-full bg-yellow-100 text-yellow-800 border border-yellow-200">
-                                    <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg>
-                                    Pending Review
-                                </span>
+                                <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700 border border-yellow-200">Pending Review</span>
                             @endif
-                        </dd>
-                    </div>
-                    
-                </dl>
-
-
-            </div>
+                        </td>
+                        <td class="px-6 py-5 text-sm text-gray-900 font-bold">
+                            {{ $contestant->region->name ?? 'Not Assigned' }}
+                        </td>
+                        <td class="px-6 py-5 text-sm text-gray-900 font-bold text-center">
+                            <span class="text-lg">{{ $total_contestants }}</span>
+                        </td>
+                        <td class="px-6 py-5 text-sm text-gray-900 font-bold text-center">
+                            <span class="text-lg">{{ $applying_contestants }}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        @else
-        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
-            <div class="flex">
-                <div class="flex-shrink-0">
-                    <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                    </svg>
-                </div>
-                <div class="ml-3">
-                    <p class="text-sm text-yellow-700">
-                        Contestant profile not found. Please contact admin to complete your registration.
-                    </p>
-                </div>
-            </div>
-        </div>
-        @endif
     </div>
+
+
+   
+
 </div>
+
 @endsection

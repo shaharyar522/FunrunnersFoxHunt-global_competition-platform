@@ -11,25 +11,25 @@ class Contestant extends Model
 
     protected $fillable = [
         'user_id',
-        'name',
-        'email',
-        'contact',
-        'region_id',
         'image',
-        'dob',
+        'name',
+        'date_of_birth',
+        'region_id',
+        'contact',
         'bio',
+        'email',
         'payment_status',
         'profile_status',
         'status',
     ];
 
     protected $casts = [
-        'dob' => 'date',
+        'date_of_birth' => 'date',
     ];
 
     public function getAgeAttribute()
     {
-        return $this->dob ? $this->dob->age : null;
+        return $this->date_of_birth ? $this->date_of_birth->age : null;
     }
 
     /**

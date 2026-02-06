@@ -69,7 +69,18 @@ class ContestantController extends Controller
         }
 
         // 5. State: Fully registered
-        return view('contestant.dashboard', compact('contestant'));
+        $current_date = now()->format('M d, Y');
+        $voting_data = \App\Models\VotingContestant::with('voting')->where('contestant_id', $contestant->id)->first();
+        
+        // Count contestants in the SAME round as this contestant
+        $total_contestants = 0;
+        if ($voting_data && $voting_data->voting_id) {
+            $total_contestants = \App\Models\VotingContestant::where('voting_id', $voting_data->voting_id)->count();
+        }
+        
+        $applying_contestants = Contestant::where('status', 0)->count();
+        
+        return view('contestant.dashboard', compact('contestant', 'total_contestants', 'current_date', 'voting_data', 'applying_contestants'));
 
     }
 
@@ -130,6 +141,16 @@ class ContestantController extends Controller
     }
 
 
+    public function profile()
+    {
+        $user = Auth::user();
+        $contestant = Contestant::where('user_id', $user->id)->first();
+        $regions = Region::all();
+        
+        return view('contestant.profile.contestant_profile', compact('contestant', 'regions'));
+    }
+
+
     /**
      * Store Profile Action
      */
@@ -138,7 +159,7 @@ class ContestantController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'image' => 'nullable|image',
-            'dob' => 'required|date|before:today',
+            'date_of_birth' => 'required|date|before:today',
             'contact' => 'required|string|max:255',
             'region' => 'nullable',
             'bio' => 'required|string',
@@ -160,12 +181,12 @@ class ContestantController extends Controller
             ['user_id' => $user->id],
             [
                 'name' => $request->name,
-                'email' => $user->email,
-                'contact' => $request->contact,
-                'region_id' => $request->region,
-                'dob' => $request->dob,
-                'bio' => $request->bio,
                 'image' => $imagePath ?? $user->contestant?->image,
+                'date_of_birth' => $request->date_of_birth,
+                'contact' => $request->contact,
+                 'region_id' => $request->region,
+                'bio' => $request->bio,
+                'email' => $user->email,
                 'profile_status' => 1,
                 'payment_status' => 1,
                 'status' => 0,

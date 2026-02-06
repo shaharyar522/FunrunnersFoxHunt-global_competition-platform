@@ -107,7 +107,7 @@
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Date of Birth</label>
-                        <input type="date" id="edit_dob" name="dob" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                        <input type="date" id="edit_dob" name="date_of_birth" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
                     </div>
                 </div>
 
@@ -173,7 +173,7 @@ function editContestant(id) {
         $('#edit_contact').val(data.contact || '');
         $('#edit_region').val(data.region_id);
         $('#edit_profile_status').val(data.profile_status);
-        $('#edit_dob').val(data.dob);
+        $('#edit_dob').val(data.date_of_birth);
     });
 }
 
@@ -193,7 +193,7 @@ function saveContestant() {
         contact: $('#edit_contact').val(),
         region_id: $('#edit_region').val(),
         profile_status: $('#edit_profile_status').val(),
-        dob: $('#edit_dob').val(),
+        date_of_birth: $('#edit_dob').val(),
     };
 
     let url = "{{ route('admin.contestants.update', ':id') }}".replace(':id', id);

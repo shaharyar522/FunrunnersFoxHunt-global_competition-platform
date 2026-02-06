@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('members', function (Blueprint $table) {
+
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->string('name');
@@ -20,6 +21,7 @@ return new class extends Migration
             $table->tinyInteger('payment_status')->default(0); // 0=not paid, 1=paid (monthly)
             $table->tinyInteger('status')->default(1); // 0=inactive/blocked, 1=active
             $table->timestamps();
+
         });
     }
 

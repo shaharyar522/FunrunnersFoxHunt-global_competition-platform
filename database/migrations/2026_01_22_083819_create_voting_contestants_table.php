@@ -14,15 +14,17 @@ return new class extends Migration
      */
     public function up(): void
     {
+
         Schema::create('voting_contestants', function (Blueprint $table) {
 
             $table->id();
             $table->foreignId('voting_id')->nullable()->constrained('votings', 'voting_id')->onDelete('cascade');
             $table->foreignId('contestant_id')->constrained('contestants')->onDelete('cascade');
-            $table->decimal('payments', 10, 2)->default(0); // payment amount
+            $table->decimal('payments', 10, 2)->default(0); 
             $table->timestamps();
 
         });
+
     }
 
     /**

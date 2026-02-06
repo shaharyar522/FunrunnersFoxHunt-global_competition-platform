@@ -107,6 +107,7 @@ Route::middleware('auth')->prefix('onboarding')->group(function () {
 
     Route::post('/pay', [ContestantController::class, 'paymentProcess'])->name('contestant.paymentProcess');
     Route::get('/success', [ContestantController::class, 'paymentSuccess'])->name('contestant.paymentSuccess');
+    Route::get('/profile-setup', [ContestantController::class, 'profile'])->name('contestant.profile');
     Route::post('/profile-setup', [ContestantController::class, 'storeProfile'])->name('contestant.storeProfile');
 
 });

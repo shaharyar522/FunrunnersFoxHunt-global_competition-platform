@@ -124,7 +124,8 @@
                         <div class="p-5 flex-grow flex flex-col justify-between">
                             <div>
                                 <p class="text-slate-600 text-sm line-clamp-2 mb-4">
-                                    {{ $contestant->bio ?? 'No bio available.' }}</p>
+                                    {{ $contestant->bio ?? 'No bio available.' }}
+                                </p>
 
                                 <!-- Q&A Section -->
                                 <div class="mt-4 border-t border-slate-100 pt-4">

@@ -107,13 +107,15 @@
                             @enderror
                         </div>
 
+
+
                         <!-- Date of Birth -->
                         <div>
                             <label class="block text-sm font-bold text-slate-700 mb-2">Date of Birth</label>
-                            <input type="date" name="dob" value="{{ old('dob', $contestant?->dob) }}"
-                                class="w-full px-5 py-4 rounded-xl border-2 @error('dob') border-red-300 @else border-slate-100 @enderror bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all text-slate-800 font-medium"
+                            <input type="date" name="date_of_birth" value="{{ old('date_of_birth', $contestant?->date_of_birth?->format('Y-m-d')) }}"
+                                class="w-full px-5 py-4 rounded-xl border-2 @error('date_of_birth') border-red-300 @else border-slate-100 @enderror bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all text-slate-800 font-medium"
                                 required>
-                            @error('dob')
+                            @error('date_of_birth')
                                 <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
@@ -146,7 +148,6 @@
                                             {{ $region->name }}
                                         </option>
                                     @endforeach
-
                                 </select>
                                 <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,6 +173,9 @@
                                 <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
+
+
+
 
 
                     </div>
