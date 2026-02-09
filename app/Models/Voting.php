@@ -24,7 +24,7 @@ class Voting extends Model
     {
 
         return $this->belongsToMany(Contestant::class, 'voting_contestants', 'voting_id', 'contestant_id')
-            ->withPivot('status', 'payments')
+            ->withPivot('payments')
             ->withTimestamps();
     }
 }

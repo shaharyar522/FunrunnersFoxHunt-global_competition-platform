@@ -14,3 +14,5 @@ class ExampleTest extends TestCase
         $this->assertTrue(true);
     }
 }
+
+/// now es k ander hum function , small method , calculation ko test krtain ahin 

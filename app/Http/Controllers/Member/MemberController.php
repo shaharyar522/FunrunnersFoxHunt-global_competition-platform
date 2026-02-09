@@ -31,8 +31,8 @@ class MemberController extends Controller
         $member = Member::where('user_id', $user->id)->first();
 
         // 1. Ensure member record exists
-        if(!$member) {
-            
+        if (!$member) {
+
             $member = Member::create([
                 'user_id' => $user->id,
                 'name' => $user->name,
@@ -53,7 +53,8 @@ class MemberController extends Controller
         if ($subscription) {
             $member->payment_status = 1;
             $member->save();
-        } else {
+        }
+        else {
             // If no active subscription record found, ensure payment_status is 0
             $member->payment_status = 0;
             $member->save();
@@ -61,7 +62,7 @@ class MemberController extends Controller
 
         // 3. Check for payment or expired subscription
         if ($member->payment_status == 0 || !$member->subscription_ends_at || now()->gt($member->subscription_ends_at)) {
-            
+
             // Mark subscription as expired if exists
             if ($subscription) {
                 $subscription->status = 0;
@@ -89,7 +90,7 @@ class MemberController extends Controller
             'usd',
             route('member.paymentSuccess'),
             route('member.dashboard'), // Back to dashboard if canceled
-            ['user_id' => $user->id]
+        ['user_id' => $user->id]
         );
 
         return redirect($session->url);
@@ -105,14 +106,14 @@ class MemberController extends Controller
 
         // Update member record
         $member = Member::updateOrCreate(
-            ['user_id' => $user->id],
-            [
-                'name' => $user->name,
-                'email' => $user->email,
-                'payment_status' => 1,
-                'subscription_ends_at' => now()->addMonth(),
-                'status' => 1,
-            ]
+        ['user_id' => $user->id],
+        [
+            'name' => $user->name,
+            'email' => $user->email,
+            'payment_status' => 1,
+            'subscription_ends_at' => now()->addMonth(),
+            'status' => 1,
+        ]
         );
 
         // Check if active subscription already exists (prevent duplicate)
@@ -142,14 +143,14 @@ class MemberController extends Controller
     public function showVotingRound($voting_id)
     {
 
-        $voting = Voting::with(['votingContestants.contestant.questions' => function($q) {
+        $voting = Voting::with(['votingContestants.contestant.questions' => function ($q) {
             $q->where('is_answered', true)->with('member')->orderBy('created_at', 'desc');
         }])->findOrFail($voting_id);
 
         // Check if user has already voted
         $userVote = Vote::where('user_id', Auth::id())
-                                    ->where('voting_id', $voting_id)
-                                    ->first();
+            ->where('voting_id', $voting_id)
+            ->first();
 
         $votedContestantId = $userVote ? $userVote->contestant_id : null;
 

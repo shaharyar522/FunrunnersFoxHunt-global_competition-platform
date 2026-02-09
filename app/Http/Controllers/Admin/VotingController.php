@@ -57,22 +57,17 @@ class VotingController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-
             'title' => 'required|string|max:255',
-            'votingdate' => 'required|date',
-            'closed_at' => 'nullable|date',
-            // 'region_id' => 'nullable|exists:regions,id',
-
+            'creationdate' => 'nullable|date',
+            'status' => 'required|integer|in:0,1,2',
+            'region_id' => 'nullable|exists:regions,id',
         ]);
 
         $voting = Voting::create([
-
             'title' => $request->title,
-            'creationdate' => Carbon::now()->toDateString(),
-            'status' => $request->status ?? 0, // Pending => 0 , open => 1, close => 2
-
+            'creationdate' => $request->creationdate ?? now()->toDateString(),
+            'status' => $request->status,
         ]);
-
 
         // AUTOMATIC ADDITION: If a region is selected, add all approved contestants
         if ($request->region_id) {

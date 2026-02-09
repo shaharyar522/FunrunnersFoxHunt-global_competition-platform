@@ -17,3 +17,5 @@ class ExampleTest extends TestCase
         $response->assertStatus(200);
     }
 }
+
+// Features k ander hum route, controller , and endpoint api ko test kartain hian

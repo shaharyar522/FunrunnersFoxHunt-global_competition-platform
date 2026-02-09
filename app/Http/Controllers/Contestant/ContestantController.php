@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Contestant;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Contestant;
+use App\Models\VotingContestant;
 use App\Models\Region;
+use App\Models\Voting;
 use App\Interfaces\PaymentGatewayInterface;
 use Illuminate\Support\Facades\Auth;
 
@@ -44,7 +46,7 @@ class ContestantController extends Controller
         }
 
         // 2. Check if contestant already paid (query voting_contestants table)
-        $votingContestant = \App\Models\VotingContestant::where('contestant_id', $contestant->id)
+        $votingContestant = VotingContestant::where('contestant_id', $contestant->id)
             ->limit(1)
             ->first();
 
@@ -56,7 +58,6 @@ class ContestantController extends Controller
 
         // 3. State: Unpaid - Show payment page
         if ($contestant->payment_status == 0) {
-
             return view('contestant.payment.payment_required');
         }
 
@@ -68,20 +69,79 @@ class ContestantController extends Controller
             return view('contestant.profile.contestant_profile', compact('contestant', 'regions'));
         }
 
-        // 5. State: Fully registered
-        $current_date = now()->format('M d, Y');
-        $voting_data = \App\Models\VotingContestant::with('voting')->where('contestant_id', $contestant->id)->first();
-        
-        // Count contestants in the SAME round as this contestant
-        $total_contestants = 0;
-        if ($voting_data && $voting_data->voting_id) {
-            $total_contestants = \App\Models\VotingContestant::where('voting_id', $voting_data->voting_id)->count();
-        }
-        
-        $applying_contestants = Contestant::where('status', 0)->count();
-        
-        return view('contestant.dashboard', compact('contestant', 'total_contestants', 'current_date', 'voting_data', 'applying_contestants'));
 
+        // ✅ Fetch all votings
+        $rounds = Voting::orderBy('creationdate', 'desc')->get();
+
+        // ✅ Check if contestant applied for each voting and get total applied counts
+        foreach ($rounds as $round) {
+            $round->already_applied = VotingContestant::where('voting_id', $round->voting_id)
+                ->where('contestant_id', $contestant->id)
+                ->exists();
+            
+            $round->applied_count = VotingContestant::where('voting_id', $round->voting_id)->count();
+        }
+
+        $applying_contestants = Contestant::where('status', 0)->count();
+
+        return view('contestant.dashboard', compact('contestant', 'rounds', 'applying_contestants'));
+    }
+
+    /**
+     * Apply to a Specific Voting Round
+     */
+    public function applyToRound($voting_id)
+    {
+        $user = Auth::user();
+        $contestant = Contestant::where('user_id', $user->id)->firstOrFail();
+
+        // 1. Check if already applied to THIS round
+        $alreadyApplied = VotingContestant::where('voting_id', $voting_id)
+            ->where('contestant_id', $contestant->id)
+            ->first();
+
+        if ($alreadyApplied) {
+            return response()->json(['success' => false, 'message' => 'You have already applied for this round.']);
+        }
+
+        // 2. Find a "floating" payment (voting_id is NULL)
+        $floatingPayment = VotingContestant::where('contestant_id', $contestant->id)
+            ->whereNull('voting_id')
+            ->first();
+
+        if ($floatingPayment) {
+            // Use the existing payment record
+            $floatingPayment->voting_id = $voting_id;
+            $floatingPayment->save();
+
+            return response()->json(['success' => true, 'message' => 'Application submitted successfully!']);
+        }
+
+        // 3. No floating payment found
+        return response()->json([
+            'success' => false, 
+            'message' => 'No active payment found. You must pay the entry fee first.',
+            'needs_payment' => true
+        ]);
+    }
+
+    /**
+     * Get list of contestants for a specific round (for AJAX modal)
+     */
+    public function getAppliedContestants($voting_id)
+    {
+        $voting = Voting::with(['contestants.region'])->findOrFail($voting_id);
+
+        return response()->json([
+            'success' => true,
+            'contestants' => $voting->contestants->map(function($c) {
+                return [
+                    'name' => $c->name,
+                    'image' => $c->image ?? 'https://i.pravatar.cc/150?u=' . $c->id,
+                    'region' => $c->region->name ?? 'Global'
+                ];
+            })
+        ]);
     }
 
     /**
@@ -93,11 +153,13 @@ class ContestantController extends Controller
         $user = Auth::user();
 
         $session = $this->paymentGateway->createCheckoutSession(
+
             5.00, // $5 Entry Fee
             'usd',
             route('contestant.paymentSuccess'),
             route('contestant.dashboard'), // Back to dashboard if canceled
             ['user_id' => $user->id]
+
         );
 
         return redirect($session->url);
@@ -122,22 +184,22 @@ class ContestantController extends Controller
             ]
         );
 
-        // Check if entry already exists in voting_contestants (prevent duplicate payments)
-        $existingEntry = \App\Models\VotingContestant::where('contestant_id', $contestant->id)
-            ->limit(1)
+        // Check if there's already an UNUSED payment (to prevent double-spend on same session)
+        $existingUnusedEntry = \App\Models\VotingContestant::where('contestant_id', $contestant->id)
+            ->whereNull('voting_id')
             ->first();
 
-        // Only create entry if it doesn't exist (one-time payment)
-        if (!$existingEntry) {
+        // Only create entry if they don't have a "floating" payment waiting
+        if (!$existingUnusedEntry) {
             \App\Models\VotingContestant::create([
-                'voting_id' => null, // Will be assigned when admin creates voting round
+                'voting_id' => null, // Will be assigned when they click "Apply" on a round
                 'contestant_id' => $contestant->id,
                 'payments' => 5.00, // Entry fee amount
             ]);
         }
 
         return redirect()->route('contestant.dashboard')
-            ->with('success', 'Payment successful! Please complete your profile');
+            ->with('success', 'Payment successful! You can now apply for a competition round.');
     }
 
 
@@ -146,7 +208,7 @@ class ContestantController extends Controller
         $user = Auth::user();
         $contestant = Contestant::where('user_id', $user->id)->first();
         $regions = Region::all();
-        
+
         return view('contestant.profile.contestant_profile', compact('contestant', 'regions'));
     }
 
@@ -170,6 +232,7 @@ class ContestantController extends Controller
         // Handle image upload
         $imagePath = null;
         if ($request->hasFile('image')) {
+
             $file = $request->file('image');
             $filename = $user->id . '_' . time() . '.' . $file->getClientOriginalExtension();
             $path = $file->storeAs('contestants', $filename, 'public');
@@ -184,7 +247,7 @@ class ContestantController extends Controller
                 'image' => $imagePath ?? $user->contestant?->image,
                 'date_of_birth' => $request->date_of_birth,
                 'contact' => $request->contact,
-                 'region_id' => $request->region,
+                'region_id' => $request->region,
                 'bio' => $request->bio,
                 'email' => $user->email,
                 'profile_status' => 1,

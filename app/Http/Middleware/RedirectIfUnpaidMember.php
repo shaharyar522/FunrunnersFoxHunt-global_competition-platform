@@ -16,8 +16,9 @@ class RedirectIfUnpaidMember
 
     public function handle(Request $request, Closure $next): Response
     {
-        $user = Auth::user();
 
+        $user = Auth::user();
+        
         if ($user && $user->role === 'member') {
 
             $member = Member::where('user_id', $user->id)->first();
@@ -52,5 +53,6 @@ class RedirectIfUnpaidMember
         }
 
         return $next($request);
+
     }
 }

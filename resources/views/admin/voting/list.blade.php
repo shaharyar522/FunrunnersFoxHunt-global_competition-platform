@@ -19,10 +19,11 @@
                     </button>
                 </div>
             </div>
-            
+
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
                     <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
+
                         <tr>
 
                             <th class="px-8 py-4 font-medium">S.No</th>
@@ -32,6 +33,7 @@
                             <th class="px-8 py-4 font-medium">Action</th>
 
                         </tr>
+
                     </thead>
 
                     <tbody class="divide-y divide-gray-100">
@@ -60,14 +62,16 @@
 
                                         </button>
 
-                                    </form>
+                                    </form>  
 
                                 </td>
                                 <td class="px-8 py-5 flex items-center space-x-4">
-                                    <a href="javascript:void(0);" onclick="openVotingDetail({{ $voting->voting_id }})"
+
+                               <a href="javascript:void(0);" onclick="openVotingDetail({{ $voting->voting_id }})"
                                         class="text-blue-600 hover:text-blue-800 text-sm font-medium">
                                         View Details
                                     </a>
+
 
                                     {{--  reset voting right now..!! --}}
                                     {{-- <form action="{{ route('admin.voting.destroyVotes', $voting->voting_id) }}"
@@ -89,6 +93,7 @@
                                         </button>
 
                                     </form> --}}
+
 
                                 </td>
                             </tr>
@@ -139,16 +144,20 @@
                        class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <p class="text-xs text-gray-500 mt-1">Voting will automatically close at this time.</p>
             </div> --}}
+
+
+                {{-- after this i am adding this  --}}
+
                 {{-- <div class="mb-4">
-                <label class="block text-gray-700 font-medium mb-2">Region (Automatic Addition)</label>
-                <select name="region_id" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">-- No Region (Manual) --</option>
-                    @foreach ($regions as $region)
-                        <option value="{{ $region->id }}">{{ $region->name }}</option>
-                    @endforeach
-                </select>
-                <p class="text-xs text-gray-500 mt-1">Approved contestants from this region will be added instantly.</p>
-            </div> --}}
+                    <label class="block text-gray-700 font-medium mb-2">Region (Automatic Addition)</label>
+                    <select name="region_id" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">-- No Region (Manual) --</option>
+                        @foreach ($regions as $region)
+                            <option value="{{ $region->id }}">{{ $region->name }}</option>
+                        @endforeach
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1">Approved contestants from this region will be added instantly.</p>
+                </div> --}}
 
                 <div class="mb-4">
                     <label class="block text-gray-700 font-medium mb-2">Status</label>
@@ -168,6 +177,17 @@
 
         </div>
     </div>
+
+    @if ($errors->any())
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                html: '<ul class="text-left">@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>',
+                showConfirmButton: true
+            });
+        </script>
+    @endif
 
     @if (session('success'))
         <script>
@@ -201,23 +221,7 @@
             <p class="text-sm text-gray-500 mb-6">This will update <span class="font-bold text-indigo-600">ALL currently
                     OPEN</span> regional rounds to end at the same time.</p>
 
-            <form action="{{ route('admin.voting.sync') }}" method="POST">
-                @csrf
-                <div class="mb-6">
-                    <label class="block text-gray-700 font-medium mb-2">Global End Time</label>
-                    <input type="datetime-local" name="closed_at"
-                        class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        required>
-                </div>
-                <div class="flex justify-end gap-3">
-                    <button type="button" onclick="closeSyncModal()"
-                        class="px-4 py-2 text-gray-600 font-medium">Cancel</button>
-                    <button type="submit"
-                        class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-all font-bold">
-                        Sync All Rounds
-                    </button>
-                </div>
-            </form>
+
         </div>
     </div>
 
