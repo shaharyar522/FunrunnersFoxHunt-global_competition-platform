@@ -43,10 +43,10 @@ class VotingController extends Controller
         return back()->with('success', 'Voting status updated to ' . ($voting->status == 1 ? 'Open' : ($voting->status == 2 ? 'Closed' : 'Pending')));
     }
 
-  
 
 
- // Show Add Voting Form
+
+    // Show Add Voting Form
     public function create()
     {
         $regions = Region::all();
@@ -65,6 +65,7 @@ class VotingController extends Controller
 
         $voting = Voting::create([
             'title' => $request->title,
+            'region_id' => $request->region_id,
             'creationdate' => $request->creationdate ?? now()->toDateString(),
             'status' => $request->status,
         ]);
@@ -72,8 +73,8 @@ class VotingController extends Controller
         // AUTOMATIC ADDITION: If a region is selected, add all approved contestants
         if ($request->region_id) {
             $contestants = Contestant::where('region_id', $request->region_id)
-                                    ->where('status', 1) // Approved
-                                    ->get();
+                ->where('status', 1) // Approved
+                ->get();
 
             foreach ($contestants as $contestant) {
                 VotingContestant::create([
@@ -86,48 +87,85 @@ class VotingController extends Controller
         }
 
         return redirect()->route('admin.voting.list')
-           ->with('success', 'Voting round added successfully' . ($request->region_id ? ' with ' . $contestants->count() . ' contestants.' : '.'));
+            ->with('success', 'Voting round added successfully' . ($request->region_id ? ' with ' . $contestants->count() . ' contestants.' : '.'));
     }
 
-// ============ detials show model =========================================
-    public function detail($id)
+    // ============ detials show model =========================================
+    // public function detail($id)
+    // {
+    //     // Get voting with contestants
+    //     $voting = Voting::with(['votingContestants' => function ($q) {
+    //         $q->with('contestant');
+    //     }])->findOrFail($id);
+
+    //     // Load vote counts manually for monitoring
+    //     foreach ($voting->votingContestants as $vc) {
+    //         $vc->vote_count = Vote::where('voting_id', $id)
+    //             ->where('contestant_id', $vc->contestant_id)
+    //             ->count();
+    //     }
+
+    //     // Get other open/pending rounds for promotion
+    //     $otherRounds = Voting::where('voting_id', '!=', $id)->whereIn('status', [0, 1])->get();
+
+    //     // Return HTML for AJAX modal
+    //     if (request()->ajax()) {
+    //         return view('admin.voting.detail', compact('voting', 'otherRounds'))->render();
+    //     }
+
+    //     // fallback
+    //     return view('admin.voting.detail', compact('voting', 'otherRounds'));
+    // }
+
+
+
+    public function getVotingDetailsModal($id)
     {
-        // Get voting with contestants
-        $voting = Voting::with(['votingContestants' => function($q) {
-            $q->with('contestant');
-        }])->findOrFail($id);
+        // Eager loading: Voting ke sath unke contestants aur contestant info (Name, Image) fetch karna
+        $voting = Voting::with(['votingContestants.contestant'])->findOrFail($id);
 
-        // Load vote counts manually for monitoring
-        foreach($voting->votingContestants as $vc) {
-            $vc->vote_count = Vote::where('voting_id', $id)
-                                 ->where('contestant_id', $vc->contestant_id)
-                                 ->count();
-        }
+        return response()->json([
+            'title' => $voting->title,
+            'contestants' => $voting->votingContestants->map(function ($vc) {
+                return [
+                    'id' => $vc->id, // voting_contestants ki ID
+                    'name' => $vc->contestant->name,
+                    'image' => $vc->contestant->image
+                        ? asset('storage/' . $vc->contestant->image)
+                        : 'https://ui-avatars.com/api/?name=' . urlencode($vc->contestant->name),
+                    'status' => $vc->status, // 1=Active, 0=Blocked
+                ];
+            })
+        ]);
+    }
+    
+    //  2. Button click hone par status toggle (flip) karna
+    public function toggleContestantStatusModal($id)
+    {
+        $vc = VotingContestant::findOrFail($id);
+        
+        // Toggle: 1 (Active) -> 0 (Blocked) or vice versa
+        $vc->status = ($vc->status == 1) ? 0 : 1;
+        $vc->save();
 
-        // Get other open/pending rounds for promotion
-        $otherRounds = Voting::where('voting_id', '!=', $id)->whereIn('status', [0, 1])->get();
-
-        // Return HTML for AJAX modal
-        if(request()->ajax()){
-            return view('admin.voting.detail', compact('voting', 'otherRounds'))->render();
-        }
-
-        // fallback
-        return view('admin.voting.detail', compact('voting', 'otherRounds'));
+        return response()->json([
+            'success' => true, 
+            'new_status' => $vc->status
+        ]);
     }
 
-// Toggle contestant status
-public function toggleContestantStatus($id)
-{
-    $vc = VotingContestant::findOrFail($id);
-    $vc->status = $vc->status == 1 ? 0 : 1; // toggle
-    $vc->save();
+    // Toggle contestant status
+    public function toggleContestantStatus($id)
+    {
+        $vc = VotingContestant::findOrFail($id);
+        $vc->status = $vc->status == 1 ? 0 : 1; // toggle
+        $vc->save();
 
-    return response()->json([
-        'success' => true,
-        'status' => $vc->status
-    ]);
-}
+        return response()->json([
+            'success' => true,
+            'status' => $vc->status
+        ]);
+    }
 
     // Delete All Votes for a Round
     public function destroyVotes($id)
@@ -206,5 +244,4 @@ public function toggleContestantStatus($id)
             ->header('Content-Type', 'text/csv')
             ->header('Content-Disposition', "attachment; filename={$filename}");
     }
-
 }

@@ -22,6 +22,7 @@ class SocialController extends Controller
         if ($request->has('role')) {
 
             session(['intended_role' => $request->role]);
+
         }
 
         return Socialite::driver('google')->redirect();
@@ -43,6 +44,7 @@ class SocialController extends Controller
         session()->forget('intended_role');
 
         return $this->redirectToDashboard($user);
+
     }
 
     // -------------------
@@ -50,17 +52,21 @@ class SocialController extends Controller
     // -------------------
     public function redirectToTwitter(Request $request)
     {
+
         if ($request->has('role')) {
             session(['intended_role' => $request->role]);
         }
         return Socialite::driver('twitter')->redirect();
+
     }
 
     public function handleTwitterCallback()
     {
+
         $socialUser = Socialite::driver('twitter')->user();
         $role = session('intended_role', 'member');
         $user = $this->findOrCreateUser($socialUser, 'twitter', $role);
+        
         Auth::login($user);
 
         session()->forget('intended_role');
@@ -138,7 +144,7 @@ class SocialController extends Controller
             // Flow: Login -> Dashboard checks subscription -> Payment if needed
             return redirect()->route('member.dashboard');
         }
-        
+
 
         return redirect()->route('admin.dashboard');
     }

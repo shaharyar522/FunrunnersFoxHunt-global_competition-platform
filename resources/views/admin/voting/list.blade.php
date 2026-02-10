@@ -59,43 +59,19 @@
                                                 <span
                                                     class="px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">Closed</span>
                                             @endif
-
                                         </button>
-
-                                    </form>  
+                                    </form>
 
                                 </td>
-                                <td class="px-8 py-5 flex items-center space-x-4">
 
-                               <a href="javascript:void(0);" onclick="openVotingDetail({{ $voting->voting_id }})"
+                                <td class="px-8 py-5 flex items-center space-x-4">
+                                    <!-- Ye button missing tha -->
+                                    <a href="javascript:void(0);" onclick="openVotingDetail({{ $voting->voting_id }})"
                                         class="text-blue-600 hover:text-blue-800 text-sm font-medium">
                                         View Details
                                     </a>
-
-
-                                    {{--  reset voting right now..!! --}}
-                                    {{-- <form action="{{ route('admin.voting.destroyVotes', $voting->voting_id) }}"
-                                        method="POST"
-                                        onsubmit="return confirm('Are you sure you want to PERMANENTLY DELETE current votes for this round? This action cannot be undone.');">
-                                        @csrf
-                                        @method('DELETE')
-
-                                        <button type="submit"
-                                            class="text-red-500 hover:text-red-700 text-sm font-medium flex items-center"
-                                            title="Delete all votes for this round">
-                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                                </path>
-                                            </svg>
-                                            Reset Votes
-                                        </button>
-
-                                    </form> --}}
-
-
                                 </td>
+
                             </tr>
                         @endforeach
 
@@ -138,17 +114,17 @@
                         class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
 
-                {{-- <div class="mb-4">
+                <!-- {{-- <div class="mb-4">
                 <label class="block text-gray-700 font-medium mb-2">Voting End Time (Global Sync)</label>
                 <input type="datetime-local" name="closed_at" value="{{ old('closed_at') }}"
                        class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <p class="text-xs text-gray-500 mt-1">Voting will automatically close at this time.</p>
-            </div> --}}
+            </div> --}} -->
 
 
-                {{-- after this i am adding this  --}}
+               
 
-                {{-- <div class="mb-4">
+               <div class="mb-4">
                     <label class="block text-gray-700 font-medium mb-2">Region (Automatic Addition)</label>
                     <select name="region_id" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="">-- No Region (Manual) --</option>
@@ -157,7 +133,7 @@
                         @endforeach
                     </select>
                     <p class="text-xs text-gray-500 mt-1">Approved contestants from this region will be added instantly.</p>
-                </div> --}}
+                </div>
 
                 <div class="mb-4">
                     <label class="block text-gray-700 font-medium mb-2">Status</label>
@@ -226,149 +202,129 @@
     </div>
 
     <script>
-        function openModal() {
-            document.getElementById('addVotingModal').classList.remove('hidden');
-            document.getElementById('addVotingModal').classList.add('flex');
-        }
+    // System Config
+    const APP_URL = "{{ url('/') }}";
 
-        function closeModal() {
-            document.getElementById('addVotingModal').classList.remove('flex');
-            document.getElementById('addVotingModal').classList.add('hidden');
-        }
+    function openModal() {
+        document.getElementById('addVotingModal').classList.replace('hidden', 'flex');
+    }
 
-        function openSyncModal() {
-            document.getElementById('syncModal').classList.remove('hidden');
-            document.getElementById('syncModal').classList.add('flex');
-        }
+    function closeModal() {
+        document.getElementById('addVotingModal').classList.replace('flex', 'hidden');
+    }
 
-        function closeSyncModal() {
-            document.getElementById('syncModal').classList.remove('flex');
-            document.getElementById('syncModal').classList.add('hidden');
-        }
+    function openSyncModal() {
+        document.getElementById('syncModal').classList.replace('hidden', 'flex');
+    }
 
-        function openVotingDetail(votingId) {
-            const listView = document.getElementById('voting-list-view');
-            const detailView = document.getElementById('voting-detail-view');
-            const detailContent = document.getElementById('voting-detail-content');
+    function closeSyncModal() {
+        document.getElementById('syncModal').classList.replace('flex', 'hidden');
+    }
 
-            listView.classList.add('hidden');
-            detailView.classList.remove('hidden');
-            detailContent.innerHTML =
-                '<div class="text-center py-10"><p class="text-gray-500 text-lg">Loading details...</p></div>';
+    function openVotingDetail(votingId) {
+        const modal = document.getElementById('viewDetailModal');
+        const listContainer = document.getElementById('modalContestantList');
+        const titleElement = document.getElementById('modalVotingTitle');
 
-            fetch(`/admin/voting/detail/${votingId}`, {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(res => res.text())
-                .then(data => {
-                    detailContent.innerHTML = data;
-                })
-                .catch(err => {
-                    detailContent.innerHTML =
-                        '<p class="text-red-500 p-8">Failed to load data. <button onclick="goBackToList()" class="underline text-blue-600">Go back</button></p>';
+        listContainer.innerHTML = '<div class="text-center py-10"><p>Loading contestants...</p></div>';
+        modal.classList.replace('hidden', 'flex');
+
+        fetch(`${APP_URL}/admin/voting/detail-modal/${votingId}`)
+            .then(res => res.json())
+            .then(data => {
+                titleElement.innerText = data.title;
+                let html = '<table class="w-full text-left"><tbody class="divide-y">';
+                data.contestants.forEach(item => {
+                    const isBlocked = item.status == 0;
+                    html += `
+                        <tr>
+                            <td class="py-4 flex items-center space-x-3 text-sm">
+                                <img src="${item.image}" class="w-10 h-10 rounded-full border">
+                                <span class="font-bold">${item.name}</span>
+                            </td>
+                            <td class="py-4 text-center">
+                                <span id="badge-${item.id}" class="px-2 py-1 rounded-full text-[10px] font-bold uppercase ${isBlocked ? 'bg-gray-100 text-gray-500' : 'bg-green-100 text-green-700'}">
+                                    ${isBlocked ? 'Blocked' : 'Active'}
+                                </span>
+                            </td>
+                            <td class="py-4 text-right">
+                                <button onclick="toggleBlock(${item.id}, this)"
+                                    class="px-4 py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${isBlocked ? 'bg-green-600 text-white' : 'bg-red-50 text-red-600 shadow-sm'}">
+                                    ${isBlocked ? 'Unblock' : 'Block'}
+                                </button>
+                            </td>
+                        </tr>`;
                 });
-        }
-
-        function goBackToList() {
-            document.getElementById('voting-list-view').classList.remove('hidden');
-            document.getElementById('voting-detail-view').classList.add('hidden');
-        }
-
-        function toggleContestantStatus(id, btn) {
-            const badge = btn.querySelector('span');
-            const loader = btn.nextElementSibling;
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-            btn.classList.add('hidden');
-            loader.classList.remove('hidden');
-
-            fetch(`/admin/voting-contestant/toggle/${id}`, {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(res => res.json())
-                .then(data => {
-                    loader.classList.add('hidden');
-                    btn.classList.remove('hidden');
-                    if (data.success) {
-                        if (data.status == 1) {
-                            badge.className =
-                                'px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 border border-green-200';
-                            badge.innerText = 'Active';
-                        } else {
-                            badge.className =
-                                'px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 border border-gray-200';
-                            badge.innerText = 'Inactive';
-                        }
-                    }
-                })
-                .catch(err => {
-                    console.error('Toggle error:', err);
-                    loader.classList.add('hidden');
-                    btn.classList.remove('hidden');
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Failed to update status.'
-                    });
-                });
-        }
-
-        function promoteContestant(contestantId) {
-            const targetRoundId = document.getElementById('target-round-' + contestantId).value;
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-            if (!targetRoundId) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Wait',
-                    text: 'Please select a round to move her to.'
-                });
-                return;
-            }
-
-            Swal.fire({
-                title: 'Move Contestant?',
-                text: "She will be added to the selected round.",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, move her!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch(`/admin/voting/promote`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': csrfToken,
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                contestant_id: contestantId,
-                                target_voting_id: targetRoundId
-                            })
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                Swal.fire('Success!', data.message, 'success');
-                            } else {
-                                Swal.fire('Error', data.message, 'error');
-                            }
-                        })
-                        .catch(err => {
-                            console.error('Promotion error:', err);
-                            Swal.fire('Error', 'Something went wrong.', 'error');
-                        });
-                }
+                listContainer.innerHTML = html + '</tbody></table>';
             });
-        }
-    </script>
+    }
+
+    function toggleBlock(vcId, btn) {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const badge = document.getElementById(`badge-${vcId}`);
+
+        btn.disabled = true;
+        btn.innerText = 'Updating...';
+
+        fetch(`${APP_URL}/admin/voting/contestant/toggle/${vcId}`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.disabled = false;
+            if(data.success) {
+                if(data.new_status == 1) { // User is now Active
+                    btn.innerText = 'Block';
+                    btn.className = 'px-4 py-2 rounded-lg text-[10px] font-bold uppercase bg-red-50 text-red-600 shadow-sm transition-all';
+                    badge.innerText = 'Active';
+                    badge.className = 'px-2 py-1 rounded-full text-[10px] font-bold uppercase bg-green-100 text-green-700';
+                } else { // User is now Blocked
+                    btn.innerText = 'Unblock';
+                    btn.className = 'px-4 py-2 rounded-lg text-[10px] font-bold uppercase bg-green-600 text-white transition-all';
+                    badge.innerText = 'Blocked';
+                    badge.className = 'px-2 py-1 rounded-full text-[10px] font-bold uppercase bg-gray-100 text-gray-500';
+                }
+            } else {
+                alert('Error: Could not update status');
+                btn.innerText = 'Try Again';
+            }
+        })
+        .catch(err => {
+            btn.disabled = false;
+            btn.innerText = 'Error';
+            alert('Something went wrong. Please check your internet or permissions.');
+        });
+    }
+
+    function closeDetailModal() {
+        document.getElementById('viewDetailModal').classList.replace('flex', 'hidden');
+    }
+
+</script>
+
+    <!-- Contestant Detail Modal -->
+
+    <div id="viewDetailModal"
+        class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-[100] backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden transform transition-all mx-4">
+            <div class="px-6 py-4 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
+                <h2 id="modalVotingTitle" class="text-xl font-bold text-gray-800">Voting Contestants</h2>
+                <button onclick="closeDetailModal()"
+                    class="text-gray-400 hover:text-gray-600 p-1 hover:bg-gray-100 rounded-lg transition-all text-2xl">&times;</button>
+            </div>
+            <div class="p-6 max-h-[70vh] overflow-y-auto" id="modalContestantList">
+                <!-- Data yahan JavaScript se load hoga -->
+            </div>
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 text-right">
+                <button onclick="closeDetailModal()"
+                    class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-all">Close</button>
+            </div>
+        </div>
+    </div>
+
 @endsection

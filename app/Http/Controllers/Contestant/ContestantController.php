@@ -17,6 +17,7 @@ class ContestantController extends Controller
 
     public function __construct(PaymentGatewayInterface $paymentGateway)
     {
+
         $this->paymentGateway = $paymentGateway;
     }
 
@@ -41,7 +42,6 @@ class ContestantController extends Controller
                 'payment_status' => 0,
                 'profile_status' => 0,
                 'status' => 1
-
             ]);
         }
 
@@ -51,6 +51,7 @@ class ContestantController extends Controller
             ->first();
 
         // If entry exists in voting_contestants, contestant has already paid
+
         if ($votingContestant) {
             $contestant->payment_status = 1;
             $contestant->save();
@@ -58,6 +59,7 @@ class ContestantController extends Controller
 
         // 3. State: Unpaid - Show payment page
         if ($contestant->payment_status == 0) {
+
             return view('contestant.payment.payment_required');
         }
 
@@ -70,28 +72,37 @@ class ContestantController extends Controller
         }
 
 
+
         // ✅ Fetch all votings
         $rounds = Voting::orderBy('creationdate', 'desc')->get();
 
         // ✅ Check if contestant applied for each voting and get total applied counts
-        foreach ($rounds as $round) {
+        foreach($rounds as $round) {
+
             $round->already_applied = VotingContestant::where('voting_id', $round->voting_id)
                 ->where('contestant_id', $contestant->id)
                 ->exists();
-            
             $round->applied_count = VotingContestant::where('voting_id', $round->voting_id)->count();
+
+            // ✅ Get first 3 contestants who applied to this round (for avatar display)
+            $round->sample_contestants = Contestant::whereHas('votingContestants', function($query) use ($round) {
+                $query->where('voting_id', $round->voting_id);
+            })
+            ->limit(3)
+            ->get(['id', 'image', 'name']);
         }
 
         $applying_contestants = Contestant::where('status', 0)->count();
-
         return view('contestant.dashboard', compact('contestant', 'rounds', 'applying_contestants'));
     }
 
     /**
      * Apply to a Specific Voting Round
      */
+    
     public function applyToRound($voting_id)
     {
+
         $user = Auth::user();
         $contestant = Contestant::where('user_id', $user->id)->firstOrFail();
 
@@ -100,7 +111,7 @@ class ContestantController extends Controller
             ->where('contestant_id', $contestant->id)
             ->first();
 
-        if ($alreadyApplied) {
+        if($alreadyApplied) {
             return response()->json(['success' => false, 'message' => 'You have already applied for this round.']);
         }
 
@@ -113,13 +124,12 @@ class ContestantController extends Controller
             // Use the existing payment record
             $floatingPayment->voting_id = $voting_id;
             $floatingPayment->save();
-
             return response()->json(['success' => true, 'message' => 'Application submitted successfully!']);
         }
 
         // 3. No floating payment found
         return response()->json([
-            'success' => false, 
+            'success' => false,
             'message' => 'No active payment found. You must pay the entry fee first.',
             'needs_payment' => true
         ]);
@@ -128,13 +138,14 @@ class ContestantController extends Controller
     /**
      * Get list of contestants for a specific round (for AJAX modal)
      */
+
     public function getAppliedContestants($voting_id)
     {
         $voting = Voting::with(['contestants.region'])->findOrFail($voting_id);
 
         return response()->json([
             'success' => true,
-            'contestants' => $voting->contestants->map(function($c) {
+            'contestants' => $voting->contestants->map(function ($c) {
                 return [
                     'name' => $c->name,
                     'image' => $c->image ?? 'https://i.pravatar.cc/150?u=' . $c->id,
@@ -142,6 +153,7 @@ class ContestantController extends Controller
                 ];
             })
         ]);
+
     }
 
     /**
@@ -169,6 +181,7 @@ class ContestantController extends Controller
      * Handle Success Payment Action
      */
 
+    //payment
     public function paymentSuccess()
     {
         $user = Auth::user();
@@ -177,7 +190,6 @@ class ContestantController extends Controller
         $contestant = Contestant::updateOrCreate(
             ['user_id' => $user->id],
             [
-                'name' => $user->name,
                 'email' => $user->email,
                 'payment_status' => 1,
                 'status' => 0,
@@ -202,7 +214,7 @@ class ContestantController extends Controller
             ->with('success', 'Payment successful! You can now apply for a competition round.');
     }
 
-
+//  profiles  create
     public function profile()
     {
         $user = Auth::user();
@@ -216,6 +228,8 @@ class ContestantController extends Controller
     /**
      * Store Profile Action
      */
+    // profiles store.
+
     public function storeProfile(Request $request)
     {
         $request->validate([
@@ -259,4 +273,5 @@ class ContestantController extends Controller
         return redirect()->route('contestant.dashboard')
             ->with('success', 'Profile submitted successfully! Admin will approve your account shortly.');
     }
+
 }

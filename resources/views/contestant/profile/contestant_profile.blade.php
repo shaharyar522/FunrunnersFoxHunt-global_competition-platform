@@ -72,9 +72,9 @@
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Contestant Name</label>
                         <input type="text" name="name" id="name"
-                            value="{{ old('name', $contestant?->name ?? auth()->user()->name) }}"
+                            value="{{ old('name', ($contestant && $contestant->profile_status == 1) ? $contestant->name : '') }}"
                             class="w-full px-5 py-4 rounded-xl border-2 @error('name') border-red-300 @else border-slate-100 @enderror bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all text-slate-800 font-medium"
-                            placeholder="Enter contestant display name" required>
+                            placeholder="e.g. {{ auth()->user()->name }}" required>
                         @error('name')
                             <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                         @enderror

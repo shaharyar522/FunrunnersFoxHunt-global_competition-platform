@@ -5,6 +5,23 @@
 
 @section('content')
 
+    {{-- 1. Global Block Alert (Shown only if account is blocked) --}}
+    @if(Auth::user()->contestant && Auth::user()->contestant->status == 0)
+        <div class="bg-red-50 border-l-4 border-red-600 p-6 mb-8 rounded-r-xl shadow-lg border border-red-100 flex items-center space-x-4 animate-pulse">
+            <div class="bg-red-600 p-3 rounded-full shadow-lg">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+            </div>
+            <div>
+                <h3 class="text-xl font-black text-red-800 uppercase tracking-tighter">Your Account is Blocked</h3>
+                <p class="text-md text-red-700 font-bold italic">Please contact Admin at admin@funrunners.com to reactivate your account.</p>
+            </div>
+        </div>
+    @endif
+
+
+
     <div class="space-y-6">
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
 
@@ -16,24 +33,29 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
                     <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
+
                         <tr>
+
                             <th class="px-6 py-4 font-bold border-b">Title</th>
                             <th class="px-6 py-4 font-bold border-b text-center">Date</th>
                             <th class="px-6 py-4 font-bold border-b text-center">Status</th>
                             <th class="px-6 py-4 font-bold border-b text-center">Applied Contestants_lists</th>
                             <th class="px-6 py-4 font-bold border-b text-center">Applyins</th>
                             <th class="px-6 py-4 font-bold border-b text-right">Action</th>
+
                         </tr>
+
                     </thead>
                     <tbody class="divide-y divide-gray-100">
 
                         @forelse($rounds as $round)
                             <tr class="hover:bg-gray-50 transition-all">
+
                                 <td class="px-6 py-5 text-sm font-medium text-gray-900">
-                                    {{  $round->title }}
+                                    {{ $round->title }}
                                 </td>
                                 <td class="px-6 py-5 text-sm text-gray-600 text-center">
-                                    {{  $round->creationdate ?? ($current_date ?? now()->toDateString()) }}
+                                    {{ $round->creationdate ?? ($current_date ?? now()->toDateString()) }}
                                 </td>
 
                                 <td class="px-6 py-5 text-center">
@@ -50,53 +72,79 @@
                                         <span
                                             class="px-2.5 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-700 border border-gray-200">Pending</span>
                                     @endif
+                                    
                                 </td>
 
 
                                 <td class="px-6 py-5">
+
                                     <div class="flex justify-center items-center">
+
                                         <button
+
                                             onclick="openContestantModal({{ $round->voting_id }}, '{{ $round->title }}')"
+
                                             class="group flex -space-x-2 cursor-pointer hover:scale-110 transition-transform duration-300">
 
-                                            @php
-                                                // Just show a few placeholders or real images if you have them
-                                                $images = [
-                                                    'https://i.pravatar.cc/100?u=1',
-                                                    'https://i.pravatar.cc/100?u=2',
-                                                    'https://i.pravatar.cc/100?u=3'
-                                                ];
-                                            @endphp
-                                            
-                                            @foreach($images as $img)
-                                                <img src="{{ $img }}"
-                                                    class="w-8 h-8 rounded-full border-2 border-white shadow-sm ring-1 ring-gray-100">
-                                            @endforeach
+                                            @if ($round->sample_contestants && $round->sample_contestants->count() > 0)
+                                                {{-- Show actual contestant images --}}
+                                                @foreach ($round->sample_contestants as $contestant)
+                                                    <img src="{{ $contestant->image ?? 'https://i.pravatar.cc/100?u=' . $contestant->id }}"
+                                                        alt="{{ $contestant->name }}"
+                                                        title="{{ $contestant->name }}"
+                                                        class="w-8 h-8 rounded-full border-2 border-white shadow-sm ring-1 ring-gray-100">
+                                                @endforeach
+                                            @else
+                                                {{-- Fallback to placeholder if no contestants yet --}}
+                                                @php
+                                                    $placeholders = [
+                                                        'https://i.pravatar.cc/100?u=1',
+                                                        'https://i.pravatar.cc/100?u=2',
+                                                        'https://i.pravatar.cc/100?u=3',
+                                                    ];
+                                                @endphp
+                                                @foreach ($placeholders as $img)
+                                                    <img src="{{ $img }}"
+                                                        class="w-8 h-8 rounded-full border-2 border-white shadow-sm ring-1 ring-gray-100">
+                                                @endforeach
+                                            @endif
 
                                             <div
                                                 class="w-8 h-8 rounded-full border-2 border-white shadow-sm bg-indigo-50 flex items-center justify-center text-[10px] font-bold text-indigo-600 ring-1 ring-indigo-100">
                                                 +{{ $round->applied_count }}
                                             </div>
+
                                         </button>
                                     </div>
                                 </td>
 
 
-                                <td class="px-6 py-5 text-center">
-                                    <div class="flex flex-col items-center space-y-1">
-                                        @if($round->already_applied)
-                                            <span class="text-[10px] bg-green-100 text-green-700 px-3 py-1.5 rounded-lg font-black uppercase tracking-widest border border-green-200">
-                                                Applied
-                                            </span>
-                                        @elseif($round->status == 1)
-                                            <button onclick="applyToRound({{ $round->voting_id }})"
-                                                class="mt-2 text-[10px] bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-3 py-1.5 rounded-lg font-black hover:from-blue-700 hover:to-indigo-700 transition shadow-lg shadow-indigo-100 uppercase tracking-widest">
-                                                Apply
-                                            </button>
-                                        @else
-                                             <span class="text-[10px] text-gray-400 font-bold uppercase">Closed</span>
-                                        @endif
-                                    </div>
+                                <td class="px-6 py-5 text-right">
+                                    @php
+                                        $me = Auth::user()->contestant;
+                                        $isBlockedInRound = false;
+                                        if($me) {
+                                            $isBlockedInRound = \App\Models\VotingContestant::where('voting_id', $round->voting_id)
+                                                                ->where('contestant_id', $me->id)
+                                                                ->where('status', 0)
+                                                                ->exists();
+                                        }
+                                    @endphp
+
+                                    @if($isBlockedInRound)
+                                        <span class="text-[10px] bg-red-100 text-red-700 px-3 py-1.5 rounded-lg font-black uppercase tracking-widest border border-red-200">Blocked</span>
+                                    @elseif($round->already_applied)
+                                        <span class="text-[10px] bg-green-500 text-white px-3 py-1.5 rounded-lg font-black shadow-sm uppercase tracking-widest">Joined ✓</span>
+                                    @elseif($round->status == 1) {{-- Agar Round Open (1) hai --}}
+                                        <button onclick="applyToRound({{ $round->voting_id }})"
+                                            class="text-[10px] bg-blue-600 text-white px-4 py-2 rounded-lg font-black hover:bg-blue-700 shadow-md transition-all uppercase tracking-widest">
+                                            Apply Now
+                                        </button>
+                                    @elseif($round->status == 0)
+                                        <span class="text-[10px] bg-yellow-50 text-yellow-600 px-3 py-1.5 rounded-lg font-black border border-yellow-100 uppercase tracking-widest">Pending</span>
+                                    @else
+                                        <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Closed</span>
+                                    @endif
                                 </td>
 
                                 <td class="px-6 py-5 text-right">
@@ -116,6 +164,7 @@
                         @endforelse
 
                     </tbody>
+
                 </table>
             </div>
         </div>
@@ -125,7 +174,9 @@
 
 
     <div id="contestantModal"
-        class="fixed inset-0 z-[100] hidden overflow-hidden bg-slate-900/60 backdrop-blur-sm flex justify-center items-center transition-all duration-500">
+
+        class="hidden fixed inset-0 z-[100]  overflow-hidden bg-slate-900/60 backdrop-blur-sm flex justify-center items-center transition-all duration-500">
+
         <div id="modalContainer"
             class="bg-white rounded-3xl shadow-2xl w-full max-w-md mx-4 overflow-hidden transform transition-all scale-95 opacity-0 duration-300">
             <!-- Modal Header -->
@@ -156,8 +207,6 @@
                     class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 rounded-2xl font-black text-lg hover:from-indigo-700 hover:to-purple-700 transition shadow-xl shadow-indigo-100 active:scale-95">
                     APPLY FOR THIS ROUND
                 </button>
-                <p class="text-center text-[10px] text-gray-400 font-bold uppercase tracking-widest">Limited Slots Available
-                </p>
             </div>
         </div>
     </div>
@@ -187,10 +236,13 @@
 
 
     <script>
+
         let activeRoundId = null;
+
         const baseUrl = "{{ url('/') }}";
 
         async function openContestantModal(roundId, roundTitle) {
+
             activeRoundId = roundId;
             const modal = document.getElementById('contestantModal');
             const container = document.getElementById('modalContainer');
@@ -212,8 +264,9 @@
 
             try {
                 const response = await fetch(`${baseUrl}/onboarding/round/${roundId}/contestants`);
+
                 const data = await response.json();
-                
+
                 if (data.success) {
                     if (!data.contestants || data.contestants.length === 0) {
                         list.innerHTML = `
@@ -240,11 +293,13 @@
                 }
             } catch (error) {
                 console.error('Fetch Error:', error);
-                list.innerHTML = `<p class="text-center text-red-500 text-xs font-bold">Failed to load contestants.</p>`;
+                list.innerHTML =
+                    `<p class="text-center text-red-500 text-xs font-bold">Failed to load contestants.</p>`;
             }
         }
 
         function closeModal() {
+
             const modal = document.getElementById('contestantModal');
             const container = document.getElementById('modalContainer');
 
@@ -255,6 +310,7 @@
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
             }, 300);
+
         }
 
         // Close modal on click outside
@@ -266,7 +322,9 @@
         }
 
         async function applyToRound(roundId) {
-            if (!confirm('Are you sure you want to apply for this round? This will use one of your entry payments.')) return;
+
+            if (!confirm('Are you sure you want to apply for this round? This will use one of your entry payments.'))
+                return;
 
             try {
                 const response = await fetch(`${baseUrl}/onboarding/apply-round/${roundId}`, {
@@ -274,12 +332,13 @@
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content')
                     }
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (data.success) {
                     alert(data.message);
                     window.location.reload();

@@ -10,9 +10,16 @@ class Voting extends Model
 
     protected $fillable = [
         'title',
+        'region_id',
         'creationdate',
         'status'
     ];
+
+
+    public function region()
+    {
+        return $this->belongsTo(Region::class, 'region_id');
+    }
 
 
     public function votingContestants()
