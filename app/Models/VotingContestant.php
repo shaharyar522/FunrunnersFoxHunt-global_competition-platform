@@ -1,8 +1,12 @@
 <?php
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class VotingContestant extends Model
 {
+    use HasFactory;
+
 
     protected $fillable = ['voting_id', 'contestant_id', 'payments', 'status'];
 
@@ -14,7 +18,7 @@ class VotingContestant extends Model
 
     }
 
-    public function voting()
+    public function voting()  
     {
 
         return $this->belongsTo(Voting::class, 'voting_id');

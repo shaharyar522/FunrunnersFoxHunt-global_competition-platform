@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Contestant;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class Region extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'name',
     ];

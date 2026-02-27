@@ -42,7 +42,15 @@ class AdminController extends Controller
 
     public function dashboard()
     {
-        return view('admin.dashboard');
+        $stats = [
+            'total_members' => Member::count(),
+            'active_contestants' => Contestant::where('status', 1)->count(),
+            'total_votings' => Voting::count(),
+            'total_regions' => \App\Models\Region::count(),
+            'total_votes' => \App\Models\Vote::count(),
+        ];
+
+        return view('admin.dashboard', compact('stats'));
     }
 
     public function votingList()

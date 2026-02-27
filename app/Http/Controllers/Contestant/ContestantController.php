@@ -34,7 +34,7 @@ class ContestantController extends Controller
         // 1. Ensure contestant record exists
         if (!$contestant) {
 
-            $contestant = Contestant::create([
+            $contestant = Contestant::create([  
 
                 'user_id' => $user->id,
                 'name' => $user->name,

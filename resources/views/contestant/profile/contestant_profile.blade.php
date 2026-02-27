@@ -6,7 +6,8 @@
 
     <div class="max-w-3xl mx-auto">
         <div class="bg-white shadow-xl rounded-2xl overflow-hidden border border-slate-100">
-            
+
+
             <div class="bg-gradient-to-r from-blue-600 to-indigo-700 px-10 py-10 text-white text-center">
                 <h1 class="text-3xl font-bold">Manage Your Profile</h1>
                 <p class="mt-2 text-indigo-100 opacity-80">This information will be visible to voters worldwide.</p>
@@ -74,7 +75,7 @@
                         <input type="text" name="name" id="name"
                             value="{{ old('name', ($contestant && $contestant->profile_status == 1) ? $contestant->name : '') }}"
                             class="w-full px-5 py-4 rounded-xl border-2 @error('name') border-red-300 @else border-slate-100 @enderror bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all text-slate-800 font-medium"
-                            placeholder="e.g. {{ auth()->user()->name }}" required>
+                            placeholder="Contestant Name" required>
                         @error('name')
                             <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                         @enderror
@@ -215,6 +216,7 @@
             {{-- for after filling form does not remove the form data remin same even any missing input --}}
 
             <script>
+                
                 const formFields = ['name', 'date_of_birth', 'contact', 'region', 'bio'];
 
                 // Restore data on page load

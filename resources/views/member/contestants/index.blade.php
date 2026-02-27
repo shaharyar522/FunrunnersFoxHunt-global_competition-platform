@@ -11,7 +11,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                         </svg>
-                        Back to Dashboard
+                        Back to Dashboard 
                     </a>
                     <h1 class="text-3xl font-extrabold text-slate-900">{{ $voting->title }}</h1>
                     <p class="mt-2 text-slate-600">Cast your vote carefully. You only get <span

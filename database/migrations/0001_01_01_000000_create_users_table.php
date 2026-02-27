@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->timestamp('email_verified_at')->nullable();  
 
             // ✅ ADD THESE
             $table->string('provider')->nullable();
@@ -27,7 +27,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        
+
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
